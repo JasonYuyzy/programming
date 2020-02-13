@@ -71,6 +71,7 @@ int will_be_alive (struct universe *u, int column, int row)
     }
     else if (row == 0)
     {
+    //up row
         //left
         if (u->mat[row][column-1] == '*')
         {
@@ -99,6 +100,7 @@ int will_be_alive (struct universe *u, int column, int row)
     }
     else if (column == 0)
     {
+    //right most column
         //top middle
         if (u->mat[row+1][column] == '*')
         {
@@ -125,57 +127,163 @@ int will_be_alive (struct universe *u, int column, int row)
             alive = alive + 1;
         }
     }
+    else if (row == 0 && column == width)
+    {
+    //the right up corner
+        //left
+        if (u->mat[row][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+    }
     else if (row == height && column == width)
     {
-        //in the down left corner
+    //in the down right corner
+        //top middle
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //left
+        if (u->mat[row][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+    }
+    else if (row == height && column == 0)
+    {
+    //the left down corner
+        //top middle
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top right
+        if (u->mat[row+1][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //right
+        if (u->mat[row][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
     }
     else if (row == height)
     {
-        //in the bottom
+    //in the bottom row
+        //right
+        if (u->mat[row][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //left
+        if (u->mat[row][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top middle
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top right
+        if (u->mat[row+1][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
     }
     else if (column == width)
     {
-        //in the left most
+    //in the left column
+        //top middle
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //left
+        if (u->mat[row][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
     }
-    //top left
-    if (u->mat[(row-1+height)%height][(column-1+width)%width] == '*')
+    else
     {
-        alive = alive + 1;
-    }
-    //top middle
-    if (u->mat[(row-1+height)%height][(column+width)%width] == '*')
-    {
-        alive = alive + 1;
-    }
-    //top right
-    if (u->mat[(row-1+height)%height][(column+1+width)%width] == '*')
-    {
-        alive = alive + 1;
-    }
-    //left
-    if (u->mat[(row+height)%height][(column-1+width)%width] == '*')
-    {
-        alive = alive + 1;
-    }
-    //right
-    if (u->mat[(row+height)%height][(column+1+width)%width] == '*')
-    {
-        alive = alive + 1;
-    }
-    //down left
-    if (u->mat[(row+1+height)%height][(column-1+width)%width] == '*')
-    {
-        alive = alive + 1;
-    }
-    //down
-    if (u->mat[(row+1+height)%height][(column+width)%width] == '*')
-    {
-        alive = alive + 1;
-    }
-    //down right
-    if (u->mat[(row+1+height)%height][(column+1+width)%width] == '*')
-    {
-        alive = alive + 1;
+        //top right
+        if (u->mat[row+1][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top middle
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+        //top left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //right
+        if (u->mat[row][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //left
+        if (u->mat[row][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down left
+        if (u->mat[row+1][column-1] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down
+        if (u->mat[row+1][column] == '*')
+        {
+            alive = alive + 1;
+        }
+        //down right
+        if (u->mat[row+1][column+1] == '*')
+        {
+            alive = alive + 1;
+        }
     }
 
     if (is_alive && alive > 2)
