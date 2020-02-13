@@ -3,37 +3,71 @@
 
 struct matrix{
     char **m;
+    int column;
+    int row;
 };
 
 void print_m (struct matrix *u);
 void change_m (struct matrix *u);
+FILE *fopen( const char * filename, const char * mode );
 
 int main()
 {
 
     struct matrix u1;
-    struct matrix u2;
     int i;
 
-    u1.m = (char **)malloc(sizeof(char *) * 10);
-    for (i = 0; i < 10; i ++)
-    { // 按行分配每一列
-    	u1.m[i] = (char *)malloc(sizeof(char) * 10);
-    }
 
-    u2.m = (char **)malloc(sizeof(char *) * 10);
-    for (i = 0; i < 10; i ++)
-    { // 按行分配每一列
-    	u2.m[i] = (char *)malloc(sizeof(char) * 10);
-    }
-    //for (int i = 0; i < 10; ++i)
-    //{
-    	//free(*(u1.m + i));
-    //}
+    //read the file and get the row and column
+    FILE *fp;
+    fp=fopen("glider.txt","rt");
 
-    for (int i = 0; i < 10; i++)
+    char ch;
+
+    int row = 0, column = 0, check_column = 0;
+
+    while( (ch=fgetc(fp)) != EOF )
     {
-        for (int j = 0; j < 10; j++)
+        putchar(ch);
+        if (ch != '\n')
+        {
+            column = column + 1;
+        }
+        if (ch == '\n')
+        {
+            if (check_column == 0)
+            {
+                row = row + 1;
+                check_column = column;
+                column = 0;
+            }
+            else if (check_column != column)
+            {
+                printf("the column is not correct");
+                return 0;
+            }
+            else
+            {
+                row = row + 1;
+                check_column = column;
+                column = 0;
+            }
+        }
+    }
+
+    u1.row = row;
+    u1.column = column;
+
+    u1.m = (char **)malloc(sizeof(char *) * row);
+    for (i = 0; i < row; i ++)
+    { // 按行分配每一列
+    	u1.m[i] = (char *)malloc(sizeof(char) * column);
+    }
+
+
+    for (int i = 0; i < row; i++)
+    {
+        for (int j = 0; j < column; j++)
         {
             if (i%2 == 1 && j%2 == 0)
             {
@@ -45,7 +79,7 @@ int main()
             }
         }
     }
-
+/*
     for (int i = 0; i < 10; i++)
     {
         for (int j = 0; j < 10; j++)
@@ -60,9 +94,7 @@ int main()
             }
         }
     }
-
-    print_m( &u1 );
-    change_m( &u1 );
+*/
     print_m( &u1 );
 
     return 0;
@@ -101,9 +133,9 @@ int main()
 
 void print_m (struct matrix *u)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < u->row; i++)
     {
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < u->column; j++)
         {
             if (j == 9)
             {
@@ -113,19 +145,6 @@ void print_m (struct matrix *u)
             {
                 printf("%c", u->m[i][j]);
             }
-        }
-    }
-}
-
-void change_m (struct matrix *u)
-{
-    //struct matrix u1;
-
-    for (int i = 0; i < 5; i++)
-    {
-        for (int j = 0; j < 5; j++)
-        {
-            u1.m[i][j] = '&';
         }
     }
 }
