@@ -1,6 +1,8 @@
 struct universe {
 /*Put some appropriate things here*/
     char **mat;
+    int column;
+    int row;
 };
 
 /*Do not modify the next seven lines*/
@@ -16,19 +18,54 @@ void print_statistics(struct universe *u);
 void read_in_file (FILE *infile, struct universe *u)
 {
     struct universe u_new;
-    struct universe u_previous;
 
-    u_new.mat = (char **)malloc(sizeof(char *) * height(row));
-    for (i = 0; i < 10; i ++)
-    { //distribute every column base on each row
-    	u_new.mat[i] = (char *)malloc(sizeof(char) * width(column));
+    //read the file and get the row and column
+    FILE *fp;
+    fp=fopen("glider.txt","rt");
+
+    char ch;
+
+    int row = 0, column = 0, check_column = 0;
+
+    while( (ch=fgetc(fp)) != EOF )
+    {
+        putchar(ch);
+        if (ch != '\n')
+        {
+            column = column + 1;
+        }
+        if (ch == '\n')
+        {
+            if (check_column == 0)
+            {
+                row = row + 1;
+                printf("%d, %d", row, column);
+                check_column = column;
+                column = 0;
+            }
+            else if (check_column != column)
+            {
+                return error;
+            }
+            else
+            {
+                row = row + 1;
+                check_column = column;
+                column = 0;
+            }
+        }
     }
 
-    u_previous.mat = (char **)malloc(sizeof(char *) * 10);
-    for (i = 0; i < 10; i ++)
+    //set the row and column in the struct universe
+    u_new.row = row;
+    u_new.column = column;
+
+    u_new.mat = (char **)malloc(sizeof(char *) * row);
+    for (i = 0; i < row; i ++)
     { //distribute every column base on each row
-    	u_previous.mat = (char *)malloc(sizeof(char) * 10);
+    	u_new.mat[i] = (char *)malloc(sizeof(char) * column);
     }
+
 }
 
 void write_out_file (FILE *outfile, struct universe *u)
