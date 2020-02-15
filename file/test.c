@@ -51,19 +51,37 @@ void read_in_file (FILE *infile, struct universe *u)
             {
                 row = row + 1;
                 check_column = column;
+                //set the column in the struct universe
+                u_new.column = column;
                 column = 0;
             }
         }
     }
+    fseek(fp,0,SEEK_SET);
 
-    //set the row and column in the struct universe
+    //set the row in the struct universe
     u_new.row = row;
-    u_new.column = column;
 
     u_new.mat = (char **)malloc(sizeof(char *) * row);
     for (i = 0; i < row; i ++)
     { //distribute every column base on each row
     	u_new.mat[i] = (char *)malloc(sizeof(char) * column);
+    }
+
+    while( (ch=fgetc(fp)) != EOF )
+    {
+        if (ch != '\n')
+        {
+            printf("%c", ch);
+            u1.m[row][column] = ch;
+            column = column + 1;
+        }
+        if (ch == '\n')
+        {
+            printf("\n");
+            row = row + 1;
+            column = 0;
+        }
     }
 
 }
@@ -402,4 +420,9 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
 void print_statistics (struct universe *u)
 {
 
+    //release the space for the matrix when every time the program finished
+    for (int i = 0; i < u->row; ++i)
+    {
+    	free(*(u.mat + i));
+    }
 }
