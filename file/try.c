@@ -8,16 +8,17 @@ struct matrix{
 };
 
 void print_m (struct matrix *u);
+void print_m1 (struct matrix *u, int column, int row);
 void change_m (struct matrix *u);
 FILE *fopen( const char * filename, const char * mode );
 
-int main()
+int main( int argc, char *argv[] )
 {
 
     struct matrix u1;
     int i;
 
-
+    printf("%s\n", argv[1]);
     //read the file and get the row and column
     FILE *fp;
     fp=fopen("glider.txt","rt");
@@ -28,12 +29,11 @@ int main()
 
     while( (ch=fgetc(fp)) != EOF )
     {
-        putchar(ch);
-        if (ch != '\n')
+        if (ch != '\n' && (ch == '.' || ch == '*'))
         {
             column = column + 1;
         }
-        if (ch == '\n')
+        else if (ch == '\n')
         {
             if (check_column == 0)
             {
@@ -43,101 +43,98 @@ int main()
             }
             else if (check_column != column)
             {
-                printf("the column is not correct");
+                printf("something in the column/row is missing\n");
                 return 0;
             }
             else
             {
                 row = row + 1;
                 check_column = column;
+                u1.column = column;
                 column = 0;
             }
         }
+        else
+        {
+            printf("the symble in the file is wrong!\n");
+            return 0;
+        }
     }
 
+    fseek(fp,0,SEEK_SET);
+
+
     u1.row = row;
-    u1.column = column;
+
+    printf("the column and row: %d,%d\n", u1.column, u1.row);
 
     u1.m = (char **)malloc(sizeof(char *) * row);
-    for (i = 0; i < row; i ++)
-    { // 按行分配每一列
+    for (i = 0; i < row; ++i)
+    {
     	u1.m[i] = (char *)malloc(sizeof(char) * column);
     }
 
+    row = 0;
+    column = 0;
 
-    for (int i = 0; i < row; i++)
+    while( (ch=fgetc(fp)) != EOF )
     {
-        for (int j = 0; j < column; j++)
+        if (ch != '\n')
         {
-            if (i%2 == 1 && j%2 == 0)
-            {
-                u1.m[i][j] = '*';
-            }
-            else
-            {
-                u1.m[i][j] = '.';
-            }
+            printf("%c", ch);
+            u1.m[row][column] = ch;
+            column = column + 1;
+        }
+        if (ch == '\n')
+        {
+            printf("\n");
+            row = row + 1;
+            column = 0;
         }
     }
-/*
-    for (int i = 0; i < 10; i++)
+
+    printf("print out the matrix\n");
+    print_m( &u1 );
+
+    //release the space for the matrix when every time the program finished
+    for (int i = 0; i < row; ++i)
     {
-        for (int j = 0; j < 10; j++)
-        {
-            if (i%2 == 1 && j%2 == 0)
-            {
-                u2.m[i][j] = '#';
-            }
-            else
-            {
-                u2.m[i][j] = ',';
-            }
-        }
+    	free(*(u1.m + i));
     }
-*/
+
+    printf("release the u1.m's space\n");
+
     print_m( &u1 );
 
     return 0;
 
-/*
-    char a[4][4];
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            if (i%2 == 1 && j%2 == 0) {
-               a[i][j] = '*';
-            } else {
-               a[i][j] = '.';
-            }
-        }
-    }
-
-    a[2][1] = '&';
-
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            if (a[i][j] == '*')
-            {
-                printf("alive\n");
-            }
-            else if (a[i][j] == '.')
-            {
-                printf("dead\n");
-            }
-        }
-    }
-    printf("sp:%c\n", a[2][1]);
-*/
 }
 
 void print_m (struct matrix *u)
 {
-    for (int i = 0; i < u->row; i++)
+    for (int i = 0; i < u->row; ++i)
     {
-        for (int j = 0; j < u->column; j++)
+        for (int j = 0; j < u->column; ++j)
         {
-            if (j == 9)
+            if (j == u->column - 1)
+            {
+                printf("%c\n", u->m[i][j]);
+            }
+            else
+            {
+                printf("%c", u->m[i][j]);
+            }
+        }
+    }
+}
+
+void print_m1 (struct matrix *u, int column, int row)
+{
+    for (int i = 0; i < row; ++i)
+    {
+        for (int j = 0; j < column; ++j)
+        {
+            if (j == column - 1)
             {
                 printf("%c\n", u->m[i][j]);
             }
