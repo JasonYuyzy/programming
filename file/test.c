@@ -432,7 +432,44 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
     struct universe u_will;
-
+    int check;
+    u_will = u->mat;
+    if (chose the normal)
+    {
+        for (int i = 0; i < n->row; ++i)
+        {
+            for (int j = 0; j < u->column; ++j)
+            {
+                check = will_be_alive ( &->mat, j, i);
+                if (check)
+                {
+                    u_will.mat[i][j] = '*';
+                }
+                else
+                {
+                    u_will.mat[i][j] = '.';
+                }
+            }
+        }
+    }
+    else
+    {
+        for (int i = 0; i < n->row; ++i)
+        {
+            for (int j = 0; j < u->column; ++j)
+            {
+                check = will_be_alive_torus ( &u->mat, j, i);
+                if (check)
+                {
+                    u_will.mat[i][j] = '*';
+                }
+                else
+                {
+                    u_will.mat[i][j] = '.';
+                }
+            }
+        }
+    }
 }
 
 void print_statistics (struct universe *u)
