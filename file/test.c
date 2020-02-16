@@ -17,17 +17,16 @@ void print_statistics(struct universe *u);
 
 void read_in_file (FILE *infile, struct universe *u)
 {
-    struct universe u_new;
+    struct universe u_now;
 
     //read the file and get the row and column
-    FILE *fp;
-    fp=fopen("glider.txt","rt");
+    infile = fopen("glider.txt","rt");
 
     char ch;
 
     int row = 0, column = 0, check_column = 0;
 
-    while( (ch=fgetc(fp)) != EOF )
+    while( (ch=fgetc(infile)) != EOF )
     {
         putchar(ch);
         if (ch != '\n')
@@ -57,23 +56,23 @@ void read_in_file (FILE *infile, struct universe *u)
             }
         }
     }
-    fseek(fp,0,SEEK_SET);
+    fseek(infile,0,SEEK_SET);
 
     //set the row in the struct universe
-    u_new.row = row;
+    u_now.row = row;
 
-    u_new.mat = (char **)malloc(sizeof(char *) * row);
+    u_now.mat = (char **)malloc(sizeof(char *) * row);
     for (i = 0; i < row; i ++)
     { //distribute every column base on each row
-    	u_new.mat[i] = (char *)malloc(sizeof(char) * column);
+    	u_now.mat[i] = (char *)malloc(sizeof(char) * column);
     }
 
-    while( (ch=fgetc(fp)) != EOF )
+    while( (ch=fgetc(infile)) != EOF )
     {
         if (ch != '\n')
         {
             printf("%c", ch);
-            u1.m[row][column] = ch;
+            u_now.mat[row][column] = ch;
             column = column + 1;
         }
         if (ch == '\n')
@@ -88,7 +87,25 @@ void read_in_file (FILE *infile, struct universe *u)
 
 void write_out_file (FILE *outfile, struct universe *u)
 {
-
+    outfile = fopen("test.txt", "w+");
+    fputs("this is the final life:\n", outfile);
+    for (int i = 0; i < u->row; ++i)
+    {
+        for (int j = 0; j < u->column; ++j)
+        {
+            if (j == u->column - 1)
+            {
+                //change the line
+                fputc(u->mat[i][j], outfile);
+                fputs("\n", outfile);
+            }
+            else
+            {
+                fputc(u->mat[i][j], outfile);
+            }
+        }
+    }
+    fclose(outfile);
 }
 
 int is_alive (struct universe *u, int column, int row)
@@ -358,42 +375,42 @@ int will_be_alive (struct universe *u, int column, int row)
 int will_be_alive_torus (struct universe *u, int column, int row)
 {
     int alive = 0;
-    if (universe *u [(row-1+height)%height][(column-1+width)%width] == '*')
+    if (u->mat[(row-1+height)%height][(column-1+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //top middle
-    if (universe *u [(row-1+height)%height][(column+width)%width] == '*')
+    if (u->mat[(row-1+height)%height][(column+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //top right
-    if (universe *u [(row-1+height)%height][(column+1+width)%width] == '*')
+    if (u->mat[(row-1+height)%height][(column+1+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //left
-    if (universe *u [(row+height)%height][(column-1+width)%width] == '*')
+    if (u->mat[(row+height)%height][(column-1+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //right
-    if (universe *u [(row+height)%height][(column+1+width)%width] == '*')
+    if (u->mat[(row+height)%height][(column+1+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //down left
-    if (universe *u [(row+1+height)%height][(column-1+width)%width] == '*')
+    if (u->mat[(row+1+height)%height][(column-1+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //down
-    if (universe *u [(row+1+height)%height][(column+width)%width] == '*')
+    if (u->mat[(row+1+height)%height][(column+width)%width] == '*')
     {
         alive = alive + 1;
     }
     //down right
-    if (universe *u [(row+1+height)%height][(column+1+width)%width] == '*')
+    if (u->mat[(row+1+height)%height][(column+1+width)%width] == '*')
     {
         alive = alive + 1;
     }
@@ -414,6 +431,7 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
+    struct universe u_will;
 
 }
 
@@ -423,6 +441,6 @@ void print_statistics (struct universe *u)
     //release the space for the matrix when every time the program finished
     for (int i = 0; i < u->row; ++i)
     {
-    	free(*(u.mat + i));
+    	free(*(u->mat + i));
     }
 }

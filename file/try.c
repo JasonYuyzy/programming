@@ -10,7 +10,7 @@ struct matrix{
 void print_m (struct matrix *u);
 void print_m1 (struct matrix *u, int column, int row);
 void change_m (struct matrix *u);
-FILE *fopen( const char * filename, const char * mode );
+void write_out_file (FILE *outfile, struct matrix *u);
 
 int main( int argc, char *argv[] )
 {
@@ -21,7 +21,7 @@ int main( int argc, char *argv[] )
     printf("%s\n", argv[1]);
     //read the file and get the row and column
     FILE *fp;
-    fp=fopen("glider.txt","rt");
+    fp = fopen("glider.txt","rt");
 
     char ch;
 
@@ -96,6 +96,9 @@ int main( int argc, char *argv[] )
     printf("print out the matrix\n");
     print_m( &u1 );
 
+    FILE *outfile;
+    write_out_file (outfile, &u1 );
+
     //release the space for the matrix when every time the program finished
     for (int i = 0; i < row; ++i)
     {
@@ -144,4 +147,27 @@ void print_m1 (struct matrix *u, int column, int row)
             }
         }
     }
+}
+
+void write_out_file (FILE *outfile, struct matrix *u)
+{
+    outfile = fopen("test.txt", "w+");
+    fputs("this is the final life:\n", outfile);
+    for (int i = 0; i < u->row; ++i)
+    {
+        for (int j = 0; j < u->column; ++j)
+        {
+            if (j == u->column - 1)
+            {
+                fputc(u->m[i][j], outfile);
+                fputs("\n", outfile);
+            }
+            else
+            {
+                fputc(u->m[i][j], outfile);
+            }
+        }
+    }
+    fclose(outfile);
+
 }
