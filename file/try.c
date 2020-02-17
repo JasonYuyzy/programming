@@ -8,7 +8,7 @@ struct matrix{
 };
 
 void print_m (struct matrix *u);
-void print_m1 (struct matrix *u, int column, int row);
+void print_m1 (char **will);
 void change_m (struct matrix *u);
 void write_out_file (FILE *outfile, struct matrix *u);
 
@@ -19,6 +19,21 @@ int main( int argc, char *argv[] )
     int i;
 
     printf("%s\n", argv[1]);
+    printf("%s\n", argv[2]);
+    printf("%s\n", argv[3]);
+    printf("%s\n", argv[4]);
+    printf("%s\n", argv[5]);
+
+    char str, fileName;
+    if (argv[1] == '-i')
+    {
+        switch (argv[2])
+        {
+            case "-o":
+                printf("Please input the file name:");
+                fileName = gets( &str );
+        }
+    }
     //read the file and get the row and column
     FILE *fp;
     fp = fopen("glider.txt","rt");
@@ -81,23 +96,27 @@ int main( int argc, char *argv[] )
     {
         if (ch != '\n')
         {
-            printf("%c", ch);
+            //printf("%c", ch);
             u1.m[row][column] = ch;
             column = column + 1;
         }
         if (ch == '\n')
         {
-            printf("\n");
+            //printf("\n");
             row = row + 1;
             column = 0;
         }
     }
+    char **will;
+    will = u1.m;
+    //printf("will matrix\n");
+    //print_m1( will );
 
-    printf("print out the matrix\n");
-    print_m( &u1 );
+    //printf("print out the matrix\n");
+    //print_m( &u1 );
 
     FILE *outfile;
-    write_out_file (outfile, &u1 );
+    //write_out_file (outfile, &u1 );
 
     //release the space for the matrix when every time the program finished
     for (int i = 0; i < row; ++i)
@@ -107,7 +126,7 @@ int main( int argc, char *argv[] )
 
     printf("release the u1.m's space\n");
 
-    print_m( &u1 );
+    //print_m( &u1 );
 
     return 0;
 
@@ -131,19 +150,19 @@ void print_m (struct matrix *u)
     }
 }
 
-void print_m1 (struct matrix *u, int column, int row)
+void print_m1 (char **will)
 {
-    for (int i = 0; i < row; ++i)
+    for (int i = 0; i < 20; ++i)
     {
-        for (int j = 0; j < column; ++j)
+        for (int j = 0; j < 20; ++j)
         {
-            if (j == column - 1)
+            if (j == 19)
             {
-                printf("%c\n", u->m[i][j]);
+                printf("%c\n", will[i][j]);
             }
             else
             {
-                printf("%c", u->m[i][j]);
+                printf("%c", will[i][j]);
             }
         }
     }
