@@ -20,7 +20,7 @@ void read_in_file (FILE *infile, struct universe *u)
     //read the file and get the row and column
     infile = fopen("glider.txt","rt");
 
-    char ch;
+    char ch, ch_in;
 
     int i, j, row = 0, column = 0, check_column = 0;
 
@@ -59,18 +59,20 @@ void read_in_file (FILE *infile, struct universe *u)
     //set the row in the struct universe
     u->row = row;
 
-    u->mat = (char **)malloc(sizeof(char *) * row);
+    u->mat = (char **)malloc(sizeof(char *) * u->row);
     for (i = 0; i < row; ++i)
     { //distribute every column base on each row
-    	u->mat[i] = (char *)malloc(sizeof(char) * column);
+    	u->mat[i] = (char *)malloc(sizeof(char) * u->column);
     }
 
-    while( (ch=fgetc(infile)) != EOF )
+    row = 0;
+    column = 0;
+    while( (ch_in=fgetc(infile)) != EOF )
     {
-        if (ch != '\n')
+        if (ch_in != '\n')
         {
-            printf("%c", ch);
-            u->mat[row][column] = ch;
+            printf("%c", ch_in);
+            u->mat[row][column] = ch_in;
             column = column + 1;
         }
         if (ch == '\n')

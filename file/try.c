@@ -18,27 +18,12 @@ int main( int argc, char *argv[] )
     struct matrix u1;
     int i;
 
-    printf("%s\n", argv[1]);
-    printf("%s\n", argv[2]);
-    printf("%s\n", argv[3]);
-    printf("%s\n", argv[4]);
-    printf("%s\n", argv[5]);
 
-    char str, fileName;
-    if (argv[1] == '-i')
-    {
-        switch (argv[2])
-        {
-            case "-o":
-                printf("Please input the file name:");
-                fileName = gets( &str );
-        }
-    }
     //read the file and get the row and column
     FILE *fp;
     fp = fopen("glider.txt","rt");
 
-    char ch;
+    char ch, ch_in;
 
     int row = 0, column = 0, check_column = 0;
 
@@ -83,37 +68,47 @@ int main( int argc, char *argv[] )
 
     printf("the column and row: %d,%d\n", u1.column, u1.row);
 
-    u1.m = (char **)malloc(sizeof(char *) * row);
+    u1.m = (char **)malloc(sizeof(char *) * u1.row);
     for (i = 0; i < row; ++i)
     {
-    	u1.m[i] = (char *)malloc(sizeof(char) * column);
+    	u1.m[i] = (char *)malloc(sizeof(char) * u1.column);
     }
 
     row = 0;
     column = 0;
 
-    while( (ch=fgetc(fp)) != EOF )
+    while( (ch_in=fgetc(fp)) != EOF )
     {
-        if (ch != '\n')
+        if (ch_in != '\n')
         {
-            //printf("%c", ch);
-            u1.m[row][column] = ch;
+            printf("%c", ch_in);
+            u1.m[row][column] = ch_in;
+            if (row==3 && column == 19)
+            {
+                //printf("\n%c\n", ch_in);
+                printf("\n0 %c,%c", u1.m[row][column], u1.m[3][19]);
+            }
             column = column + 1;
         }
-        if (ch == '\n')
+        if (ch_in == '\n')
         {
-            //printf("\n");
+            printf("\n");
             row = row + 1;
             column = 0;
         }
     }
+
+
     char **will;
+
+    printf("\n1 the 3,19 one%c\n", u1.m[3][19]);
     will = u1.m;
     //printf("will matrix\n");
     //print_m1( will );
+    printf("\n2 the 3,19 one%c\n", u1.m[3][19]);
 
-    //printf("print out the matrix\n");
-    //print_m( &u1 );
+    printf("print out the matrix\n");
+    print_m( &u1 );
 
     FILE *outfile;
     //write_out_file (outfile, &u1 );
@@ -134,6 +129,7 @@ int main( int argc, char *argv[] )
 
 void print_m (struct matrix *u)
 {
+    printf("\nthe 3,19 one%c\n", u->m[3][19]);
     for (int i = 0; i < u->row; ++i)
     {
         for (int j = 0; j < u->column; ++j)
