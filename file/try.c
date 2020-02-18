@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<unistd.h>
+#include<getopt.h>
 
 struct matrix{
     char **m;
@@ -22,6 +24,71 @@ int main( int argc, char *argv[] )
     //read the file and get the row and column
     FILE *fp;
     fp = fopen("glider.txt","rt");
+
+    int opt, print_statistics, use_torus;
+    char *string = "sti:o:g:";
+/*
+    while ((opt = getopt(argc, argv, string))!= -1)
+    {
+        printf("opt = %c\t\t", opt);
+        printf("optarg = %s\t\t",optarg);
+        printf("optind = %d\t\t",optind);
+        printf("argv[optind] = %s\n",argv[optind]);
+    }*/
+
+    while ((opt = getopt(argc, argv, string))!= -1)
+    {
+        switch (opt)
+        {
+            case 'i':
+                if (optarg)
+                {
+                    char inputFileName = atol(optarg);
+                    //strcpy(path, optarg);
+                    printf("the opt i %c\n", inputFileName);
+                }
+                else
+                {
+                    printf("Please input the file name: \n");
+                }
+                continue;
+            case 'o':
+                if (optarg)
+                {
+                    char outputFileName = atol(optarg);
+                    printf("the opt o %c\n", outputFileName);
+                }
+                else
+                {
+                    int outputFileName = 0;
+                    printf("the opt o %d\n", outputFileName);
+                }
+                continue;
+            case 'g':
+                if (optarg)
+                {
+                    int generation_num = atoi(optarg);
+                    printf("the opt g %d\n", generation_num);
+                }
+                else
+                {
+                    int generation_num = 5;
+                    printf("the opt g %d\n", generation_num);
+                }
+                continue;
+            case 's':
+                print_statistics = 1;
+                printf("the opt s %d\n", print_statistics);
+                continue;
+            case 't':
+                use_torus = 1;
+                printf("the opt t %d\n", use_torus);
+                continue;
+        }
+    }
+    //char n = argv[1];
+    //printf("%c\n", n);
+
 
     char ch, ch_in;
 
@@ -66,7 +133,7 @@ int main( int argc, char *argv[] )
 
     u1.row = row;
 
-    printf("the column and row: %d,%d\n", u1.column, u1.row);
+    //printf("the column and row: %d,%d\n", u1.column, u1.row);
 
     u1.m = (char **)malloc(sizeof(char *) * u1.row);
     for (i = 0; i < row; ++i)
@@ -81,18 +148,18 @@ int main( int argc, char *argv[] )
     {
         if (ch_in != '\n')
         {
-            printf("%c", ch_in);
+            //printf("%c", ch_in);
             u1.m[row][column] = ch_in;
             if (row==3 && column == 19)
             {
                 //printf("\n%c\n", ch_in);
-                printf("\n0 %c,%c", u1.m[row][column], u1.m[3][19]);
+                //printf("\n0 %c,%c", u1.m[row][column], u1.m[3][19]);
             }
             column = column + 1;
         }
         if (ch_in == '\n')
         {
-            printf("\n");
+            //printf("\n");
             row = row + 1;
             column = 0;
         }
@@ -101,17 +168,12 @@ int main( int argc, char *argv[] )
 
     char **will;
 
-    printf("\n1 the 3,19 one%c\n", u1.m[3][19]);
     will = u1.m;
-    //printf("will matrix\n");
+    //printf("print out the will matrix\n");
     //print_m1( will );
-    printf("\n2 the 3,19 one%c\n", u1.m[3][19]);
 
-    printf("print out the matrix\n");
-    print_m( &u1 );
-
-    FILE *outfile;
-    //write_out_file (outfile, &u1 );
+    //printf("print out the matrix\n");
+    //print_m( &u1 );
 
     //release the space for the matrix when every time the program finished
     for (int i = 0; i < row; ++i)
@@ -119,7 +181,7 @@ int main( int argc, char *argv[] )
     	free(*(u1.m + i));
     }
 
-    printf("release the u1.m's space\n");
+    //printf("release the u1.m's space\n");
 
     //print_m( &u1 );
 
@@ -129,7 +191,6 @@ int main( int argc, char *argv[] )
 
 void print_m (struct matrix *u)
 {
-    printf("\nthe 3,19 one%c\n", u->m[3][19]);
     for (int i = 0; i < u->row; ++i)
     {
         for (int j = 0; j < u->column; ++j)
