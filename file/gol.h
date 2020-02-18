@@ -1,9 +1,9 @@
 struct universe 
 {
 /*Put some appropriate things here*/
-    	char **mat;
-    	int column;
-    	int row;
+    char **mat;
+    int column;
+    int row;
 	char *inputFileName;
 	char *outputFileName;
 	int generation_num;
