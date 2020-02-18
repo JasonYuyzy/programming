@@ -3,6 +3,9 @@ struct universe {
     char **mat;
     int column;
     int row;
+	char *inputFileName;
+	char *outputFileName;
+	int generation_num;
 };
 
 /*Do not modify the next seven lines*/
@@ -18,7 +21,7 @@ void print_statistics(struct universe *u);
 void read_in_file (FILE *infile, struct universe *u)
 {
     //read the file and get the row and column
-    infile = fopen("glider.txt","rt");
+    infile = fopen(u->inputFileName,"rt");
 
     char ch, ch_in;
 
@@ -87,7 +90,7 @@ void read_in_file (FILE *infile, struct universe *u)
 
 void write_out_file (FILE *outfile, struct universe *u)
 {
-    outfile = fopen("test.txt", "w+");
+    outfile = fopen(u->outputFileName, "w+");
     fputs("this is the final life:\n", outfile);
     for (int i = 0; i < u->row; ++i)
     {
