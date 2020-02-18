@@ -3,16 +3,22 @@
 #include<unistd.h>
 #include<getopt.h>
 
-struct matrix{
+struct matrix
+{
     char **m;
     int column;
     int row;
+    char *inputFileName;
+    char *outputFileName;
+    int generation_num;
 };
+
 
 void print_m (struct matrix *u);
 void print_m1 (char **will);
 void change_m (struct matrix *u);
 void write_out_file (FILE *outfile, struct matrix *u);
+void read_in_file (FILE *infile, struct matrix *u);
 
 int main( int argc, char *argv[] )
 {
@@ -20,12 +26,12 @@ int main( int argc, char *argv[] )
     struct matrix u1;
     int i;
 
-
     //read the file and get the row and column
     FILE *fp;
     fp = fopen("glider.txt","rt");
 
     int opt, print_statistics, use_torus;
+
     char *string = "sti:o:g:";
 /*
     while ((opt = getopt(argc, argv, string))!= -1)
@@ -43,9 +49,8 @@ int main( int argc, char *argv[] )
             case 'i':
                 if (optarg)
                 {
-                    char inputFileName = atol(optarg);
-                    //strcpy(path, optarg);
-                    printf("the opt i %c\n", inputFileName);
+                    u1.inputFileName = optarg;
+                    printf("the opt i %s\n", u1.inputFileName);
                 }
                 else
                 {
@@ -55,8 +60,8 @@ int main( int argc, char *argv[] )
             case 'o':
                 if (optarg)
                 {
-                    char outputFileName = atol(optarg);
-                    printf("the opt o %c\n", outputFileName);
+                    u1.outputFileName = optarg;
+                    printf("the opt o %s\n", u1.outputFileName);
                 }
                 else
                 {
@@ -67,8 +72,8 @@ int main( int argc, char *argv[] )
             case 'g':
                 if (optarg)
                 {
-                    int generation_num = atoi(optarg);
-                    printf("the opt g %d\n", generation_num);
+                    u1.generation_num = atoi(optarg);
+                    printf("the opt g %d\n", u1.generation_num);
                 }
                 else
                 {
@@ -86,6 +91,7 @@ int main( int argc, char *argv[] )
                 continue;
         }
     }
+    read_in_file(stdin,&u1);
     //char n = argv[1];
     //printf("%c\n", n);
 
@@ -246,4 +252,25 @@ void write_out_file (FILE *outfile, struct matrix *u)
     }
     fclose(outfile);
 
+}
+
+void read_in_file (FILE *infile, struct matrix *u)
+{
+    char ch_in;
+    infile = fopen(u->inputFileName,"rt");
+    printf("%s\n", u->inputFileName);
+    printf("%s\n", u->outputFileName);
+    printf("%d\n", u->generation_num);
+
+    while( (ch_in=fgetc(infile)) != EOF )
+    {
+        if (ch_in != '\n')
+        {
+            printf("%c", ch_in);
+        }
+        if (ch_in == '\n')
+        {
+            printf("\n");
+        }
+    }
 }
