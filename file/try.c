@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<unistd.h>
 #include<getopt.h>
+#include<string.h>
 
 struct matrix
 {
@@ -10,6 +11,7 @@ struct matrix
     int row;
     char *inputFileName;
     char *outputFileName;
+    int outputFile;
     int generation_num;
 };
 
@@ -27,42 +29,81 @@ int main( int argc, char *argv[] )
     struct matrix u1;
     int i;
 
-    //read the file and get the row and column
-    FILE *fp;
-    fp = fopen("glider.txt","rt");
+
 
     int opt, print_statistics, use_torus;
 
-    char *string = "sti:o:g:";
+    //read and analyse the command line
+/*
+    while ((opt = getopt(argc, argv, "i::g::o::st"))!= -1)
+    {
+        printf("opt = %c\t\t", opt);
+        printf("optarg = %s\t\t",optarg);
+        printf("optind = %d\t\t",optind);
+        printf("argv[optind] = %s\n",argv[optind]);
+    }
 
-    while ((opt = getopt(argc, argv, string))!= -1)
+
+
+
+    for (int q = 1; q < argc; ++q)
+    {
+        printf("the command line input: %s\n", argv[q]);
+    }
+*/
+    char sha[100];
+    char *optstr = "i:g::o::st";
+    if (argc == 1)
+    {
+        printf("please enter the code ' -i input_fileName -o output_fileName -g number_of_generations -g -s'follow!!! \n");
+        return 1;
+    }
+    int i_num=1, o_num=1, g_num=1, s_num=1, t_num=1;
+    while ((opt = getopt(argc, argv, optstr))!= -1)
     {
         switch (opt)
         {
             case 'i':
-                if (optarg)
+                if (!i_num)
                 {
-                    u1.inputFileName = optarg;
-                    printf("the opt i %s\n", u1.inputFileName);
+                    printf("-i repeated!!\n");
+                    return 0;
                 }
-                else
+
+                if((strcmp("-s", optarg) == 0) || (strcmp("-g", optarg) == 0) || (strcmp("-o", optarg) == 0) || (strcmp("-t", optarg) == 0))
                 {
-                    printf("Please input the file name: \n");
+                    printf("wrong input command line\n");
+                    return 0;
                 }
-                continue;
+                u1.inputFileName = optarg;
+                printf("the opt i %s\n", u1.inputFileName);
+
+                i_num = 0;
+                break;
             case 'o':
-                if (optarg)
+                if (!o_num)
                 {
-                    u1.outputFileName = optarg;
-                    printf("the opt o %s\n", u1.outputFileName);
+                    printf("-o repeated!!\n");
+                    return 0;
                 }
-                else
+
+                if((strcmp("-s", optarg) == 0) || (strcmp("-g", optarg) == 0) || (strcmp("-i", optarg) == 0) || (strcmp("-t", optarg) == 0))
                 {
-                    int outputFileName = 0;
-                    printf("the opt o %d\n", outputFileName);
+                    printf("wrong input command line\n");
+                    return 0;
                 }
-                continue;
+                u1.inputFileName = optarg;
+                printf("the opt i %s\n", u1.inputFileName);
+
+                o_num = 0;
+                break;
             case 'g':
+                if (!g_num)
+                {
+                    printf("-g repeated!!\n");
+                    return 0;
+                }
+
                 if (optarg)
                 {
                     u1.generation_num = atoi(optarg);
@@ -70,21 +111,57 @@ int main( int argc, char *argv[] )
                 }
                 else
                 {
-                    int generation_num = 5;
-                    printf("the opt g %d\n", generation_num);
+                    u1.generation_num = 5;
+                    printf("no g %d\n", generation_num);
                 }
-                continue;
+                g_num = 0;
+                break;
             case 's':
+                if (!s_num)
+                {
+                    printf("-s repeated!!\n");
+                    return 0;
+                }
+
                 print_statistics = 1;
-                printf("the opt s %d\n", print_statistics);
-                continue;
+                printf("has s%d\n", print_statistics);
+                s_num = 0;
+                break;
             case 't':
+                if (!t_num)
+                {
+                    printf("-t repeated!!\n");
+                    return 0;
+                }
+
                 use_torus = 1;
-                printf("the opt t %d\n", use_torus);
-                continue;
+                printf("has t %d\n", use_torus);
+                t_num = 0;
+                break;
+
+            default:
+                if(strchr(optstr, optopt) == NULL)
+                {
+                    fprintf(stderr, "unknown option '-%c'\n", optopt);
+                }
+                else
+                {
+                    fprintf(stderr, "option '-%c' requires an argument \n", optopt);
+                }
+                return 0;
         }
     }
-    read_in_file(stdin,&u1);
+    //if (i_num==1 || o_num==1 || g_num==1)
+    //{
+        //printf("the command need to be entered!!\n");
+        //return 0;
+    //}
+    //read_in_file(stdin,&u1);
+
+
+    //read the file and get the row and column
+    FILE *fp;
+    fp = fopen("glider.txt","rt");
 
     char ch, ch_in;
 
@@ -168,7 +245,7 @@ int main( int argc, char *argv[] )
     }
 
     //printf("print out the matrix\n");
-    print_m( &u1 );
+    //print_m( &u1 );
 
     //release the space for the matrix when every time the program finished
     for (int i = 0; i < row; ++i)
@@ -272,9 +349,10 @@ void read_in_file (FILE *infile, struct matrix *u)
     infile = fopen(u->inputFileName,"rt");
     printf("%s\n", u->inputFileName);
     printf("%s\n", u->outputFileName);
+    printf("%d\n", u->outputFile);
     printf("%d\n", u->generation_num);
 
-    while( (ch_in=fgetc(infile)) != EOF )
+    /*while( (ch_in=fgetc(infile)) != EOF )
     {
         if (ch_in != '\n')
         {
@@ -284,5 +362,5 @@ void read_in_file (FILE *infile, struct matrix *u)
         {
             printf("\n");
         }
-    }
+    }*/
 }
