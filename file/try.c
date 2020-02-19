@@ -5,7 +5,7 @@
 
 struct matrix
 {
-    char **m;
+    int **m;
     int column;
     int row;
     char *inputFileName;
@@ -15,6 +15,7 @@ struct matrix
 
 
 void print_m (struct matrix *u);
+void print_char (struct matrix *u);
 void print_m1 (char **will);
 void change_m (struct matrix *u);
 void write_out_file (FILE *outfile, struct matrix *u);
@@ -33,14 +34,6 @@ int main( int argc, char *argv[] )
     int opt, print_statistics, use_torus;
 
     char *string = "sti:o:g:";
-/*
-    while ((opt = getopt(argc, argv, string))!= -1)
-    {
-        printf("opt = %c\t\t", opt);
-        printf("optarg = %s\t\t",optarg);
-        printf("optind = %d\t\t",optind);
-        printf("argv[optind] = %s\n",argv[optind]);
-    }*/
 
     while ((opt = getopt(argc, argv, string))!= -1)
     {
@@ -92,9 +85,6 @@ int main( int argc, char *argv[] )
         }
     }
     read_in_file(stdin,&u1);
-    //char n = argv[1];
-    //printf("%c\n", n);
-
 
     char ch, ch_in;
 
@@ -141,10 +131,10 @@ int main( int argc, char *argv[] )
 
     //printf("the column and row: %d,%d\n", u1.column, u1.row);
 
-    u1.m = (char **)malloc(sizeof(char *) * u1.row);
+    u1.m = (int **)malloc(sizeof(int *) * u1.row);
     for (i = 0; i < row; ++i)
     {
-    	u1.m[i] = (char *)malloc(sizeof(char) * u1.column);
+    	u1.m[i] = (int *)malloc(sizeof(int) * u1.column);
     }
 
     row = 0;
@@ -155,31 +145,30 @@ int main( int argc, char *argv[] )
         if (ch_in != '\n')
         {
             //printf("%c", ch_in);
-            u1.m[row][column] = ch_in;
-            if (row==3 && column == 19)
+            if (ch_in == '.')
             {
-                //printf("\n%c\n", ch_in);
-                //printf("\n0 %c,%c", u1.m[row][column], u1.m[3][19]);
+                u1.m[row][column] = 0;
+            }
+            else if (ch_in == '*')
+            {
+                u1.m[row][column] = 1;
+            }
+            else
+            {
+                printf("the input file is not correct\n");
+                return 0;
             }
             column = column + 1;
         }
         if (ch_in == '\n')
         {
-            //printf("\n");
             row = row + 1;
             column = 0;
         }
     }
 
-
-    char **will;
-
-    will = u1.m;
-    //printf("print out the will matrix\n");
-    //print_m1( will );
-
     //printf("print out the matrix\n");
-    //print_m( &u1 );
+    print_m( &u1 );
 
     //release the space for the matrix when every time the program finished
     for (int i = 0; i < row; ++i)
@@ -197,39 +186,62 @@ int main( int argc, char *argv[] )
 
 void print_m (struct matrix *u)
 {
+    struct matrix u_will;
+
+    u_will.m = u->m;
+    u_will.row = u->row;
+    u_will.column = u->column;
+    print_char (&u_will);
+    printf("print the will matrix in int\n");
     for (int i = 0; i < u->row; ++i)
     {
         for (int j = 0; j < u->column; ++j)
         {
             if (j == u->column - 1)
             {
-                printf("%c\n", u->m[i][j]);
+                printf("%d\n", u_will.m[i][j]);
             }
             else
             {
-                printf("%c", u->m[i][j]);
+                printf("%d", u_will.m[i][j]);
             }
         }
     }
 }
 
-void print_m1 (char **will)
+void print_char (struct matrix *u)
 {
-    for (int i = 0; i < 20; ++i)
+    printf("print the will matrix in char\n");
+    for (int i = 0; i < u->row; ++i)
     {
-        for (int j = 0; j < 20; ++j)
+        for (int j = 0; j < u->column; ++j)
         {
-            if (j == 19)
+            if (j == u->column - 1)
             {
-                printf("%c\n", will[i][j]);
+                if (u->m[i][j])
+                {
+                    printf("*\n");
+                }
+                else
+                {
+                    printf(".\n");
+                }
             }
             else
             {
-                printf("%c", will[i][j]);
+                if (u->m[i][j])
+                {
+                    printf("*");
+                }
+                else
+                {
+                    printf(".");
+                }
             }
         }
     }
 }
+
 
 void write_out_file (FILE *outfile, struct matrix *u)
 {
