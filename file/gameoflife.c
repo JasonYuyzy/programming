@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    int outputFile = 0;
-                    printf("the opt o %d\n", outputFileName);
+                    u.outputFile = 0;
+                    printf("the opt o %d\n", outputFile);
                 }
                 continue;
             case 'g':
