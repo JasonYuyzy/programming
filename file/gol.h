@@ -6,6 +6,7 @@ struct universe
     int row;
 	char *inputFileName;
 	char *outputFileName;
+	int outputFile;
 	int generation_num;
 };
 
@@ -18,6 +19,8 @@ int will_be_alive_torus(struct universe *u,  int column, int row);
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row));
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
+
+void print_on_screen (struct universe *u);
 
 void read_in_file (FILE *infile, struct universe *u)
 {
@@ -71,17 +74,29 @@ void read_in_file (FILE *infile, struct universe *u)
 
     row = 0;
     column = 0;
-    while( (ch_in=fgetc(infile)) != EOF )
+
+    while( (ch_in=fgetc(fp)) != EOF )
     {
         if (ch_in != '\n')
         {
-            printf("%c", ch_in);
-            u->mat[row][column] = ch_in;
+            //printf("%c", ch_in);
+            if (ch_in == '.')
+            {
+                u->mat[row][column] = 0;
+            }
+            else if (ch_in == '*')
+            {
+                u->mat[row][column] = 1;
+            }
+            else
+            {
+                printf("the input file is not correct\n");
+                return 0;
+            }
             column = column + 1;
         }
-        if (ch == '\n')
+        if (ch_in == '\n')
         {
-            printf("\n");
             row = row + 1;
             column = 0;
         }
@@ -110,6 +125,7 @@ void write_out_file (FILE *outfile, struct universe *u)
         }
     }
     fclose(outfile);
+
 }
 
 int is_alive (struct universe *u, int column, int row)
@@ -437,25 +453,24 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
-    char **u_will;
+    struct universe u_will;
     int check, i, j;
-    u_will = u->mat;
+    u_will.mat = u->mat;
     for (i = 0; i < u->row; ++i)
     {
         for (j = 0; j < u->column; ++j)
         {
-            check = rule( &u, j, i);
+            check = rule( &u_will, j, i);
             if (check)
             {
-                u_will[i][j] = '*';
+                u->mat[i][j] = '*';
             }
             else
             {
-                u_will[i][j] = '.';
+                u->mat[i][j] = '.';
             }
         }
     }
-    u->mat = u_will;
 }
 
 void print_statistics (struct universe *u)
@@ -464,5 +479,38 @@ void print_statistics (struct universe *u)
     for (int i = 0; i < u->row; ++i)
     {
     	free(*(u->mat + i));
+    }
+}
+
+void print_on_screen (struct universe *u)
+{
+    printf("print the will matrix in char\n");
+    for (int i = 0; i < u->row; ++i)
+    {
+        for (int j = 0; j < u->column; ++j)
+        {
+            if (j == u->column - 1)
+            {
+                if (u->m[i][j])
+                {
+                    printf("*\n");
+                }
+                else
+                {
+                    printf(".\n");
+                }
+            }
+            else
+            {
+                if (u->m[i][j])
+                {
+                    printf("*");
+                }
+                else
+                {
+                    printf(".");
+                }
+            }
+        }
     }
 }
