@@ -20,8 +20,6 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
-void print_on_screen (struct universe *u);
-
 void read_in_file (FILE *infile, struct universe *u)
 {
     //read the file and get the row and column
@@ -108,6 +106,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 {
 	if (u->outputFile)
 	{
+		//result put into the file
 		outfile = fopen(u->outputFileName, "w+");
 		fputs("this is the final life:\n", outfile);
 		for (int i = 0; i < u->row; ++i)
@@ -117,12 +116,27 @@ void write_out_file (FILE *outfile, struct universe *u)
 				if (j == u->column - 1)
 				{
 					//change the line
-					fputc(u->mat[i][j], outfile);
-					fputs("\n", outfile);
+					if (u->mat[i][j])
+					{
+						fputc('*', outfile);
+						fputs("\n", outfile);
+					}
+					else
+					{
+						fputc('.', outfile);
+						fputs("\n", outfile);
+					}
 				}
 				else
 				{
-					fputc(u->mat[i][j], outfile);
+					if (u->mat[i][j])
+					{
+						fputc('*', outfile);
+					}
+					else
+					{
+						fputc('.', outfile);
+					}
 				}
 			}
 		}
@@ -130,7 +144,8 @@ void write_out_file (FILE *outfile, struct universe *u)
 	}
 	else
 	{
-		printf("print the will matrix in char\n");
+		//the result put on screen
+		printf("the final result:\n");
 		for (int i = 0; i < u->row; ++i)
 		{
 			for (int j = 0; j < u->column; ++j)
@@ -164,7 +179,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 
 int is_alive (struct universe *u, int column, int row)
 {
-    if (u->mat[row][column] == '*')
+    if (u->mat[row][column])
     {
         return 1;
     }
@@ -176,21 +191,24 @@ int is_alive (struct universe *u, int column, int row)
 
 int will_be_alive (struct universe *u, int column, int row)
 {
-    int alive = 0;
+	struct universe check;
+    check.mat = u->mat;
+	
+	int alive = 0;
     if (row == 0 && column == 0)
     {
         //right
-        if (u->mat[row][column+1] == '*')
+        if (u->mat[row][column+1])
         {
             alive = alive + 1;
         }
         //down
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //down right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
@@ -199,27 +217,27 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //up row
         //left
-        if (u->mat[row][column-1] == '*')
+        if (u->mat[row][column-1])
         {
             alive = alive + 1;
         }
         //right
-        if (u->mat[row][column+1] == '*')
+        if (u->mat[row][column+1])
         {
             alive = alive + 1;
         }
         //down left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //down
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //down right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
@@ -228,27 +246,27 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //right most column
         //top middle
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //top right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
         //right
-        if (u->mat[row][column+1] == '*')
+        if (u->mat[row][column+1])
         {
             alive = alive + 1;
         }
         //down
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //down right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
@@ -257,17 +275,17 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //the right up corner
         //left
-        if (u->mat[row][column-1] == '*')
+        if (u->mat[row][column-1])
         {
             alive = alive + 1;
         }
         //down left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //down
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
@@ -276,17 +294,17 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //in the down right corner
         //top middle
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //top left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //left
-        if (u->mat[row][column-1] == '*')
+        if (u->mat[row][column-1])
         {
             alive = alive + 1;
         }
@@ -295,17 +313,17 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //the left down corner
         //top middle
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //top right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
         //right
-        if (u->mat[row][column+1] == '*')
+        if (u->mat[row][column+1])
         {
             alive = alive + 1;
         }
@@ -314,27 +332,27 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //in the bottom row
         //right
-        if (u->mat[row][column+1] == '*')
+        if (u->mat[row][column+1])
         {
             alive = alive + 1;
         }
         //left
-        if (u->mat[row][column-1] == '*')
+        if (u->mat[row][column-1])
         {
             alive = alive + 1;
         }
         //top middle
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //top left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //top right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
@@ -343,27 +361,27 @@ int will_be_alive (struct universe *u, int column, int row)
     {
     //in the left column
         //top middle
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //top left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //left
-        if (u->mat[row][column-1] == '*')
+        if (u->mat[row][column-1])
         {
             alive = alive + 1;
         }
         //down left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //down
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
@@ -371,53 +389,53 @@ int will_be_alive (struct universe *u, int column, int row)
     else
     {
         //top right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
         //top middle
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //top left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //right
-        if (u->mat[row][column+1] == '*')
+        if (u->mat[row][column+1])
         {
             alive = alive + 1;
         }
         //left
-        if (u->mat[row][column-1] == '*')
+        if (u->mat[row][column-1])
         {
             alive = alive + 1;
         }
         //down left
-        if (u->mat[row+1][column-1] == '*')
+        if (u->mat[row+1][column-1])
         {
             alive = alive + 1;
         }
         //down
-        if (u->mat[row+1][column] == '*')
+        if (u->mat[row+1][column])
         {
             alive = alive + 1;
         }
         //down right
-        if (u->mat[row+1][column+1] == '*')
+        if (u->mat[row+1][column+1])
         {
             alive = alive + 1;
         }
     }
 
-    int check = is_alive ( &u, column, row);
-    if (check == 1 && alive >= 2)
+    int self_alive = is_alive ( &check, column, row);
+    if ( self_alive && alive >= 2)
     {
         return 1;
     }
-    else if ( check == 0 && alive >= 3)
+    else if ( !self_alive && alive >= 3)
     {
         return 1;
     }
@@ -429,53 +447,56 @@ int will_be_alive (struct universe *u, int column, int row)
 
 int will_be_alive_torus (struct universe *u, int column, int row)
 {
+	struct universe check;
+	check.mat = u->mat;
+	
     int alive = 0;
-    if (u->mat[(row-1+(u->row))%(u->row)][(column-1+(u->column))%(u->column)] == '*')
+    if (u->mat[(row-1+(u->row))%(u->row)][(column-1+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //top middle
-    if (u->mat[(row-1+(u->row))%(u->row)][(column+(u->column))%(u->column)] == '*')
+    if (u->mat[(row-1+(u->row))%(u->row)][(column+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //top right
-    if (u->mat[(row-1+(u->row))%(u->row)][(column+1+(u->column))%(u->column)] == '*')
+    if (u->mat[(row-1+(u->row))%(u->row)][(column+1+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //left
-    if (u->mat[(row+(u->row))%(u->row)][(column-1+(u->column))%(u->column)] == '*')
+    if (u->mat[(row+(u->row))%(u->row)][(column-1+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //right
-    if (u->mat[(row+(u->row))%(u->row)][(column+1+(u->column))%(u->column)] == '*')
+    if (u->mat[(row+(u->row))%(u->row)][(column+1+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //down left
-    if (u->mat[(row+1+(u->row))%(u->row)][(column-1+(u->column))%(u->column)] == '*')
+    if (u->mat[(row+1+(u->row))%(u->row)][(column-1+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //down
-    if (u->mat[(row+1+(u->row))%(u->row)][(column+(u->column))%(u->column)] == '*')
+    if (u->mat[(row+1+(u->row))%(u->row)][(column+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
     //down right
-    if (u->mat[(row+1+(u->row))%(u->row)][(column+1+(u->column))%(u->column)] == '*')
+    if (u->mat[(row+1+(u->row))%(u->row)][(column+1+(u->column))%(u->column)])
     {
         alive = alive + 1;
     }
 
-    int check = is_alive ( &u, column, row);
-    if (check == 1 && alive >= 2)
+    int self_alive = is_alive ( &check, column, row);
+    if ( self_alive && alive >= 2)
     {
         return 1;
     }
-    else if ( check == 0 && alive >= 3)
+    else if ( !self_alive && alive >= 3)
     {
         return 1;
     }
@@ -497,11 +518,11 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             check = rule( &u_will, j, i);
             if (check)
             {
-                u->mat[i][j] = '*';
+                u->mat[i][j] = 1;
             }
             else
             {
-                u->mat[i][j] = '.';
+                u->mat[i][j] = 0;
             }
         }
     }
@@ -513,38 +534,5 @@ void print_statistics (struct universe *u)
     for (int i = 0; i < u->row; ++i)
     {
     	free(*(u->mat + i));
-    }
-}
-
-void print_on_screen (struct universe *u)
-{
-    printf("print the will matrix in char\n");
-    for (int i = 0; i < u->row; ++i)
-    {
-        for (int j = 0; j < u->column; ++j)
-        {
-            if (j == u->column - 1)
-            {
-                if (u->m[i][j])
-                {
-                    printf("*\n");
-                }
-                else
-                {
-                    printf(".\n");
-                }
-            }
-            else
-            {
-                if (u->m[i][j])
-                {
-                    printf("*");
-                }
-                else
-                {
-                    printf(".");
-                }
-            }
-        }
-    }
+	}
 }
