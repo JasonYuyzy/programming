@@ -106,26 +106,60 @@ void read_in_file (FILE *infile, struct universe *u)
 
 void write_out_file (FILE *outfile, struct universe *u)
 {
-    outfile = fopen(u->outputFileName, "w+");
-    fputs("this is the final life:\n", outfile);
-    for (int i = 0; i < u->row; ++i)
-    {
-        for (int j = 0; j < u->column; ++j)
-        {
-            if (j == u->column - 1)
-            {
-                //change the line
-                fputc(u->mat[i][j], outfile);
-                fputs("\n", outfile);
-            }
-            else
-            {
-                fputc(u->mat[i][j], outfile);
-            }
-        }
-    }
-    fclose(outfile);
-
+	if (u->outputFile)
+	{
+		outfile = fopen(u->outputFileName, "w+");
+		fputs("this is the final life:\n", outfile);
+		for (int i = 0; i < u->row; ++i)
+		{
+			for (int j = 0; j < u->column; ++j)
+			{
+				if (j == u->column - 1)
+				{
+					//change the line
+					fputc(u->mat[i][j], outfile);
+					fputs("\n", outfile);
+				}
+				else
+				{
+					fputc(u->mat[i][j], outfile);
+				}
+			}
+		}
+		fclose(outfile);
+	}
+	else
+	{
+		printf("print the will matrix in char\n");
+		for (int i = 0; i < u->row; ++i)
+		{
+			for (int j = 0; j < u->column; ++j)
+			{
+				if (j == u->column - 1)
+				{
+					if (u->m[i][j])
+					{
+						printf("*\n");
+					}
+					else
+					{
+						printf(".\n");
+					}
+				}
+				else
+				{
+					if (u->m[i][j])
+					{
+						printf("*");
+					}
+					else
+					{
+						printf(".");
+					}
+				}
+			}
+		}
+	}
 }
 
 int is_alive (struct universe *u, int column, int row)
