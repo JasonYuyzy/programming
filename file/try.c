@@ -52,7 +52,7 @@ int main( int argc, char *argv[] )
     }
 */
     char sha[100];
-    char *optstr = "i:g::o::st";
+    char *optstr = "i:o:g:st";
     if (argc == 1)
     {
         printf("please enter the code ' -i input_fileName -o output_fileName -g number_of_generations -g -s'follow!!! \n");
@@ -66,13 +66,13 @@ int main( int argc, char *argv[] )
             case 'i':
                 if (!i_num)
                 {
-                    printf("-i repeated!!\n");
+                    printf("'-i' repeated!!\n");
                     return 0;
                 }
 
-                if((strcmp("-s", optarg) == 0) || (strcmp("-g", optarg) == 0) || (strcmp("-o", optarg) == 0) || (strcmp("-t", optarg) == 0))
+                if(!strcmp("-s", optarg) || !strcmp("-g", optarg) || !strcmp("-o", optarg) || !strcmp("-t", optarg))
                 {
-                    printf("wrong input command line\n");
+                    printf("wrong input command line: please input the correct input file name!\n");
                     return 0;
                 }
                 u1.inputFileName = optarg;
@@ -83,13 +83,13 @@ int main( int argc, char *argv[] )
             case 'o':
                 if (!o_num)
                 {
-                    printf("-o repeated!!\n");
+                    printf("'-o' repeated!!\n");
                     return 0;
                 }
 
-                if((strcmp("-s", optarg) == 0) || (strcmp("-g", optarg) == 0) || (strcmp("-i", optarg) == 0) || (strcmp("-t", optarg) == 0))
+                if(!strcmp("-s", optarg) || !strcmp("-g", optarg) || !strcmp("-i", optarg) || !strcmp("-t", optarg))
                 {
-                    printf("wrong input command line\n");
+                    printf("wrong input command line: please input the correct output file name!\n");
                     return 0;
                 }
                 u1.inputFileName = optarg;
@@ -100,26 +100,25 @@ int main( int argc, char *argv[] )
             case 'g':
                 if (!g_num)
                 {
-                    printf("-g repeated!!\n");
+                    printf("'-g' repeated!!\n");
                     return 0;
                 }
-
-                if (optarg)
+				
+				if(!strcmp("-s", optarg) || !strcmp("-i", optarg) || !strcmp("-o", optarg) || !strcmp("-t", optarg))
                 {
-                    u1.generation_num = atoi(optarg);
-                    printf("the opt g %d\n", u1.generation_num);
+                    printf("wrong input command line: please input the correct number of generation!\n");
+                    return 0;
                 }
-                else
-                {
-                    u1.generation_num = 5;
-                    printf("no g %d\n", generation_num);
-                }
+				
+                u1.generation_num = atoi(optarg);
+                printf("the opt g %d\n", u1.generation_num);
+				
                 g_num = 0;
                 break;
             case 's':
                 if (!s_num)
                 {
-                    printf("-s repeated!!\n");
+                    printf("'-s' repeated!!\n");
                     return 0;
                 }
 
@@ -130,7 +129,7 @@ int main( int argc, char *argv[] )
             case 't':
                 if (!t_num)
                 {
-                    printf("-t repeated!!\n");
+                    printf("'-t' repeated!!\n");
                     return 0;
                 }
 
@@ -151,11 +150,11 @@ int main( int argc, char *argv[] )
                 return 0;
         }
     }
-    //if (i_num==1 || o_num==1 || g_num==1)
-    //{
-        //printf("the command need to be entered!!\n");
-        //return 0;
-    //}
+    if (i_num==1)
+    {
+        printf("the input file name need to be entered!!\n");
+        return 0;
+    }
     //read_in_file(stdin,&u1);
 
 
