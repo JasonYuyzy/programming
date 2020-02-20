@@ -149,22 +149,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-
-void print_m (struct matrix *u)
-{
-    for (int i = 0; i < u->row; ++i)
-    {
-        for (int j = 0; j < u->column; ++j)
-        {
-            if (j == u->column - 1)
-            {
-                printf("%c\n", u->m[i][j]);
-            }
-            else
-            {
-                printf("%c", u->m[i][j]);
-            }
-        }
-    }
-}
