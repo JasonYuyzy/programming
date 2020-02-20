@@ -13,58 +13,115 @@ int main(int argc, char *argv[])
 {
     struct universe u;
 
-    int opt, print_statistics, use_torus;
+    int opt, print_statistics=0, use_torus=0;
 
-    char *string = "sti:o:g:";
-
-    while ((opt = getopt(argc, argv, string))!= -1)
+    char *optstr = "i:o:g:st";
+    if (argc == 1)
+    {
+        printf("please enter the code ' -i input_fileName -o output_fileName -g number_of_generations -g -s'follow!!! \n");
+        return 0;
+    }
+	//set the numbr to check the command line option
+    int i_num=1, o_num=1, g_num=1, s_num=1, t_num=1;
+    while ((opt = getopt(argc, argv, optstr))!= -1)
     {
         switch (opt)
         {
             case 'i':
-                if (optarg)
+                if (!i_num)
                 {
-                    u.inputFileName = optarg;
-                    printf("the opt i %s\n", u.inputFileName);
+                    printf("'-i' repeated!!\n");
+                    return 0;
                 }
-                else
+
+                if(!strcmp("-s", optarg) || !strcmp("-g", optarg) || !strcmp("-o", optarg) || !strcmp("-t", optarg))
                 {
-                    printf("Please input the file name: \n");
+                    printf("wrong input command line: please input the correct input file name!\n");
+                    return 0;
                 }
-                continue;
+                u.inputFileName = optarg;
+                printf("the opt i %s\n", u.inputFileName);
+
+                i_num = 0;
+                break;
             case 'o':
-                if (optarg)
+                if (!o_num)
                 {
-                    u.outputFileName = optarg;
-                    printf("the opt o %s\n", u.outputFileName);
+                    printf("'-o' repeated!!\n");
+                    return 0;
                 }
-                else
+
+                if(!strcmp("-s", optarg) || !strcmp("-g", optarg) || !strcmp("-i", optarg) || !strcmp("-t", optarg))
                 {
-                    u.outputFile = 0;
-                    printf("the opt o %d\n", outputFile);
+                    printf("wrong input command line: please input the correct output file name!\n");
+                    return 0;
                 }
-                continue;
+                u.inputFileName = optarg;
+                printf("the opt i %s\n", u.inputFileName);
+
+                o_num = 0;
+                break;
             case 'g':
-                if (optarg)
+                if (!g_num)
                 {
-                    u.generation_num = atoi(optarg);
-                    printf("the opt g %d\n", u.generation_num);
+                    printf("'-g' repeated!!\n");
+                    return 0;
+                }
+				
+				if(!strcmp("-s", optarg) || !strcmp("-i", optarg) || !strcmp("-o", optarg) || !strcmp("-t", optarg))
+                {
+                    printf("wrong input command line: please input the correct number of generation!\n");
+                    return 0;
+                }
+				else if (atoi(optarg) ==0 || optarg != int)
+				{
+					print("wrong input command line: please input the correct number of generation!\n");
+					return 0;
+				}
+                u.generation_num = atoi(optarg);
+                printf("the opt g %d\n", u.generation_num);
+                g_num = 0;
+                break;
+            case 's':
+                if (!s_num)
+                {
+                    printf("'-s' repeated!!\n");
+                    return 0;
+                }
+
+                print_statistics = 1;
+                printf("has s%d\n", print_statistics);
+                s_num = 0;
+                break;
+            case 't':
+                if (!t_num)
+                {
+                    printf("option '-t' repeated!!\n");
+                    return 0;
+                }
+
+                use_torus = 1;
+                printf("has t %d\n", use_torus);
+                t_num = 0;
+                break;
+
+            default:
+                if(strchr(optstr, optopt) == NULL)
+                {
+                    fprintf(stderr, "unknown option '-%c'\n", optopt);
                 }
                 else
                 {
-                    int generation_num = 5;
-                    printf("the opt g %d\n", generation_num);
+                    fprintf(stderr, "option '-%c' requires an argument \n", optopt);
                 }
-                continue;
-            case 's':
-                print_statistics = 1;
-                printf("the opt s %d\n", print_statistics);
-                continue;
-            case 't':
-                use_torus = 1;
-                printf("the opt t %d\n", use_torus);
-                continue;
+                return 0;
         }
+    }
+	//check the option '-i' whether inputed
+    if (i_num==1)
+    {
+        printf("the input file name need to be entered!!\n");
+        return 0;
     }
 
     read_in_file(FILE *infile, &u);
