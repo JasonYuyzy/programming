@@ -8,6 +8,11 @@ struct universe
 	char *outputFileName;
 	int outputFile;
 	int generation_num;
+	int alive_num;
+	int alive_num_previous;
+	int whole_life;
+	float statistic;
+	int print_statistics;
 };
 
 /*Do not modify the next seven lines*/
@@ -69,6 +74,8 @@ void read_in_file (FILE *infile, struct universe *u)
     { //distribute every column base on each row
     	u->mat[i] = (char *)malloc(sizeof(char) * u->column);
     }
+
+    u->whole_life = u->rwo * u->column;
 
     row = 0;
     column = 0;
@@ -141,6 +148,13 @@ void write_out_file (FILE *outfile, struct universe *u)
 			}
 		}
 		fclose(outfile);
+        //free the matrix
+		for (int i = 0; i < u->row; ++i)
+        {
+            free(*(u->mat + i));
+        }
+
+
 	}
 	else
 	{
@@ -174,6 +188,11 @@ void write_out_file (FILE *outfile, struct universe *u)
 				}
 			}
 		}
+		//free the matrix
+        for (int i = 0; i < u->row; ++i)
+        {
+            free(*(u->mat + i));
+        }
 	}
 }
 
@@ -518,6 +537,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             check = rule( &u_will, j, i);
             if (check)
             {
+                u->alive_num = u->alive_num + 1;
                 u->mat[i][j] = 1;
             }
             else
@@ -526,13 +546,14 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             }
         }
     }
+
+    //record the statistic
+    print_statistics (struct universe *u);
+
+    u->alive_num_previous = u->alive_num;
 }
 
 void print_statistics (struct universe *u)
 {
-    //release the space for the matrix when every time the program finished
-    for (int i = 0; i < u->row; ++i)
-    {
-    	free(*(u->mat + i));
-	}
+    u->statistic = u->alive_num / u->whole_life;
 }
