@@ -36,7 +36,7 @@ void read_in_file (FILE *infile, struct universe *u)
 
     while( (ch=fgetc(infile)) != EOF )
     {
-        putchar(ch);
+        //putchar(ch);
         if (ch != '\n')
         {
             column = column + 1;
@@ -52,7 +52,7 @@ void read_in_file (FILE *infile, struct universe *u)
             else if (check_column != column)
             {
                 printf("the column is missing\n");
-                return 0;
+                return;
             }
             else
             {
@@ -75,12 +75,12 @@ void read_in_file (FILE *infile, struct universe *u)
     	u->mat[i] = (char *)malloc(sizeof(char) * u->column);
     }
 
-    u->whole_life = u->rwo * u->column;
+    u->whole_life = u->row * u->column;
 
     row = 0;
     column = 0;
 
-    while( (ch_in=fgetc(fp)) != EOF )
+    while( (ch_in=fgetc(infile)) != EOF )
     {
         if (ch_in != '\n')
         {
@@ -96,7 +96,7 @@ void read_in_file (FILE *infile, struct universe *u)
             else
             {
                 printf("the input file is not correct\n");
-                return 0;
+                return ;
             }
             column = column + 1;
         }
@@ -106,11 +106,12 @@ void read_in_file (FILE *infile, struct universe *u)
             column = 0;
         }
     }
-
+    printf("successfully read in file!!!\n");
 }
 
 void write_out_file (FILE *outfile, struct universe *u)
 {
+    printf("%d\n", u->outputFile);
 	if (u->outputFile)
 	{
 		//result put into the file
@@ -166,7 +167,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 			{
 				if (j == u->column - 1)
 				{
-					if (u->m[i][j])
+					if (u->mat[i][j])
 					{
 						printf("*\n");
 					}
@@ -177,7 +178,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 				}
 				else
 				{
-					if (u->m[i][j])
+					if (u->mat[i][j])
 					{
 						printf("*");
 					}
@@ -546,15 +547,12 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             }
         }
     }
-
-    //record the statistic
-    print_statistics (struct universe *u);
-    u->alive_num = 0;
 }
 
 void print_statistics (struct universe *u)
 {
     u->statistic = u->alive_num / u->whole_life;
     printf("%f of cells currently alive\n", u->statistic);
-    u->alive_average = u->alive_average + u->alive/u->generation_num;
+    u->alive_average = u->alive_average + u->alive_num/u->generation_num;
+    u->alive_num = 0;
 }
