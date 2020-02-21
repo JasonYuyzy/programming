@@ -1,19 +1,16 @@
 #include<stdio.h>
-#include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
 #include<getopt.h>
+#include<string.h>
 
 #include"gol.h"
-
-
-void print_m (struct matrix *u);
 
 int main(int argc, char *argv[])
 {
     struct universe u;
 
-    int opt, print_statistics=0, use_torus=0;
+    int opt, use_torus=0;
 
     char *optstr = "i:o:g:st";
     if (argc == 1)
@@ -40,7 +37,6 @@ int main(int argc, char *argv[])
                     return 0;
                 }
                 u.inputFileName = optarg;
-                printf("the opt i %s\n", u.inputFileName);
 
                 i_num = 0;
                 break;
@@ -57,8 +53,7 @@ int main(int argc, char *argv[])
                     return 0;
                 }
                 u.outputFileName = optarg;
-                u.outputFileName = 1;
-                printf("the opt i %s\n", u.outputFileName);
+                u.outputFile = 1;
 
                 o_num = 0;
                 break;
@@ -74,13 +69,12 @@ int main(int argc, char *argv[])
                     printf("wrong input command line: please input the correct number of generation!\n");
                     return 0;
                 }
-				else if (atoi(optarg) ==0 || optarg != int)
+				else if (atoi(optarg) ==0)
 				{
-					print("wrong input command line: please input the correct number of generation!\n");
+					printf("wrong input command line: please input the correct number of generation!\n");
 					return 0;
 				}
                 u.generation_num = atoi(optarg);
-                printf("the opt g %d\n", u.generation_num);
                 g_num = 0;
                 break;
             case 's':
@@ -90,8 +84,7 @@ int main(int argc, char *argv[])
                     return 0;
                 }
 
-                print_statistics = 1;
-                printf("has s%d\n", print_statistics);
+                u.print_statistics = 1;
                 s_num = 0;
                 break;
             case 't':
@@ -102,7 +95,6 @@ int main(int argc, char *argv[])
                 }
 
                 use_torus = 1;
-                printf("has t %d\n", use_torus);
                 t_num = 0;
                 break;
 
@@ -130,32 +122,38 @@ int main(int argc, char *argv[])
     }
     if (t_num)
     {
-        u.use_torus = 0;
+        use_torus = 0;
     }
     if (s_num)
     {
         u.print_statistics = 0;
     }
 
-    read_in_file(FILE *infile, &u);
+    FILE *infile;
+    FILE *outfile;
+
+    read_in_file(infile, &u);
 
     u.alive_num = 0;
     u.alive_average = 0;
 
     for (int i = 0; i < u.generation_num; ++i)
     {
-        if (use_tours)
+        printf("evolve\n");
+        if (use_torus)
         {
             evolve(&u,will_be_alive);
+            print_statistics (&u);
         }
         else
         {
             evolve(&u,will_be_alive_torus);
+            print_statistics (&u);
         }
     }
 
 
-    write_out_file(FILE *outfile, &u);
+    write_out_file(outfile, &u);
 
 
     return 0;
