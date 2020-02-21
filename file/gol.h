@@ -1,7 +1,7 @@
 struct universe 
 {
 /*Put some appropriate things here*/
-    char **mat;
+    int **mat;
     int column;
     int row;
 	char *inputFileName;
@@ -24,6 +24,8 @@ int will_be_alive_torus(struct universe *u,  int column, int row);
 void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int row));
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
+
+void print_char (struct universe *u);
 
 void read_in_file (FILE *infile, struct universe *u)
 {
@@ -69,10 +71,10 @@ void read_in_file (FILE *infile, struct universe *u)
     //set the row in the struct universe
     u->row = row;
 
-    u->mat = (char **)malloc(sizeof(char *) * u->row);
+    u->mat = (int **)malloc(sizeof(int *) * u->row);
     for (i = 0; i < row; ++i)
     { //distribute every column base on each row
-    	u->mat[i] = (char *)malloc(sizeof(char) * u->column);
+    	u->mat[i] = (int *)malloc(sizeof(int) * u->column);
     }
 
     u->whole_life = u->row * u->column;
@@ -111,7 +113,7 @@ void read_in_file (FILE *infile, struct universe *u)
 
 void write_out_file (FILE *outfile, struct universe *u)
 {
-    printf("%d\n", u->outputFile);
+    printf("11111\n");
 	if (u->outputFile)
 	{
 		//result put into the file
@@ -450,6 +452,8 @@ int will_be_alive (struct universe *u, int column, int row)
         }
     }
 
+    //printf("%d\n", alive);
+
     int self_alive = is_alive ( &check, column, row);
     if ( self_alive && alive >= 2)
     {
@@ -547,6 +551,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             }
         }
     }
+    printf("asd\n");
 }
 
 void print_statistics (struct universe *u)
@@ -555,4 +560,38 @@ void print_statistics (struct universe *u)
     printf("%f of cells currently alive\n", u->statistic);
     u->alive_average = u->alive_average + u->alive_num/u->generation_num;
     u->alive_num = 0;
+}
+
+
+void print_char (struct universe *u)
+{
+    printf("print the will matrix in char\n");
+    for (int i = 0; i < u->row; ++i)
+    {
+        for (int j = 0; j < u->column; ++j)
+        {
+            if (j == u->column - 1)
+            {
+                if (u->mat[i][j])
+                {
+                    printf("*\n");
+                }
+                else
+                {
+                    printf(".\n");
+                }
+            }
+            else
+            {
+                if (u->mat[i][j])
+                {
+                    printf("*");
+                }
+                else
+                {
+                    printf(".");
+                }
+            }
+        }
+    }
 }

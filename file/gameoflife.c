@@ -139,15 +139,19 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < u.generation_num; ++i)
     {
-        printf("evolve\n");
+        printf("evolve %d\n", u.generation_num);
         if (use_torus)
         {
-            evolve(&u,will_be_alive);
+            printf("1\n");
+            evolve(&u,will_be_alive_torus);
+            printf("1.1\n");
             print_statistics (&u);
+            printf("1.2\n");
         }
         else
         {
-            evolve(&u,will_be_alive_torus);
+            printf("2\n");
+            evolve(&u,will_be_alive);
             print_statistics (&u);
         }
     }
