@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     read_in_file(FILE *infile, &u);
 
     u.alive_num = 0;
-    u.alive_num_previous = 0;
+    u.alive_average = 0;
 
     for (int i = 0; i < u.generation_num; ++i)
     {
