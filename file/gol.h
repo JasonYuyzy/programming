@@ -9,7 +9,7 @@ struct universe
 	int outputFile;
 	int generation_num;
 	int alive_num;
-	int alive_num_previous;
+	int alive_average;
 	int whole_life;
 	float statistic;
 	int print_statistics;
@@ -549,11 +549,12 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
 
     //record the statistic
     print_statistics (struct universe *u);
-
-    u->alive_num_previous = u->alive_num;
+    u->alive_num = 0;
 }
 
 void print_statistics (struct universe *u)
 {
     u->statistic = u->alive_num / u->whole_life;
+    printf("%f of cells currently alive\n", u->statistic);
+    u->alive_average = u->alive_average + u->alive/u->generation_num;
 }
