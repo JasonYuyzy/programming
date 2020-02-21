@@ -56,8 +56,9 @@ int main(int argc, char *argv[])
                     printf("wrong input command line: please input the correct output file name!\n");
                     return 0;
                 }
-                u.inputFileName = optarg;
-                printf("the opt i %s\n", u.inputFileName);
+                u.outputFileName = optarg;
+                u.outputFileName = 1;
+                printf("the opt i %s\n", u.outputFileName);
 
                 o_num = 0;
                 break;
@@ -118,13 +119,28 @@ int main(int argc, char *argv[])
         }
     }
 	//check the option '-i' whether inputed
-    if (i_num==1)
+    if (i_num)
     {
         printf("the input file name need to be entered!!\n");
         return 0;
     }
+    if (o_num)
+    {
+        u.outputFile = 0;
+    }
+    if (t_num)
+    {
+        u.use_torus = 0;
+    }
+    if (s_num)
+    {
+        u.print_statistics = 0;
+    }
 
     read_in_file(FILE *infile, &u);
+
+    u.alive_num = 0;
+    u.alive_num_previous = 0;
 
     for (int i = 0; i < u.generation_num; ++i)
     {
@@ -138,14 +154,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (print_statistics)
-    {
-        write_out_file(FILE *outfile, &u);
-    }
-    else
-    {
-        print_m(&u);
-    }
+
+    write_out_file(FILE *outfile, &u);
+
 
     return 0;
 }
