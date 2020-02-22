@@ -131,30 +131,32 @@ int main(int argc, char *argv[])
 
     FILE *infile;
     FILE *outfile;
+    u.column = 0;
+    u.row = 0;
 
     read_in_file(infile, &u);
-
     u.alive_num = 0;
+    u.alive_average = 0;
+    u.statistic = 0;
     u.alive_average = 0;
 
     for (int i = 0; i < u.generation_num; ++i)
     {
-        printf("evolve %d\n", u.generation_num);
         if (use_torus)
         {
-            printf("1\n");
             evolve(&u,will_be_alive_torus);
-            printf("1.1\n");
             print_statistics (&u);
-            printf("1.2\n");
         }
         else
         {
-            printf("2\n");
             evolve(&u,will_be_alive);
             print_statistics (&u);
         }
+        //printf("%f of the cells currently alive \n", u.statistic);
+        write_out_file(outfile, &u);
     }
+    //printf("%f of cells alive on average\n", u.alive_average);
+
 
 
     write_out_file(outfile, &u);
