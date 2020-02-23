@@ -3,6 +3,11 @@
 #include<unistd.h>
 #include<getopt.h>
 #include<string.h>
+#define MAX 100
+#define LEN 800
+
+
+char text[MAX][LEN];
 
 struct matrix
 {
@@ -10,6 +15,7 @@ struct matrix
     int column;
     int row;
     char *inputFileName;
+    char **input;
     char *outputFileName;
     int outputFile;
     int generation_num;
@@ -51,13 +57,12 @@ int main( int argc, char *argv[] )
         printf("the command line input: %s\n", argv[q]);
     }
 */
-    char sha[100];
     char *optstr = "i:o:g:st";
-    if (argc == 1)
+    /*if (argc == 1)
     {
         printf("please enter the code ' -i input_fileName -o output_fileName -g number_of_generations -g -s'follow!!! \n");
         return 1;
-    }
+    }*/
     int i_num=1, o_num=1, g_num=1, s_num=1, t_num=1;
     while ((opt = getopt(argc, argv, optstr))!= -1)
     {
@@ -152,7 +157,31 @@ int main( int argc, char *argv[] )
     }
     if (i_num==1)
     {
-        printf("the input file name need to be entered!!\n");
+        int check_len = 0;
+        int len;
+        for (int i = 0; i < MAX; ++i)
+        {
+            gets(text[i]);
+            if (!*text[i])
+            {
+                break;
+            }
+
+            if (i == 0)
+            {
+                len = strlen(text[i]);
+                check_len = len;
+            }
+            len = strlen(text[i]);
+            if (check_len != len)
+            {
+                printf("the length is not correct!\n");
+                return 0;
+            }
+
+
+        }
+
         return 0;
     }
     //read_in_file(stdin,&u1);
