@@ -6,6 +6,7 @@ struct universe
     int row;
 	char *inputFileName;
 	char *outputFileName;
+	int inputFile;
 	int outputFile;
 	int generation_num;
 	int alive_num;
@@ -25,88 +26,153 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
+
+#define MAX 100
+#define LEN 800
+
 void read_in_file (FILE *infile, struct universe *u)
 {
     //read the file and get the row and column
-    infile = fopen(u->inputFileName,"rt");
-
-    char ch, ch_in;
-
     int i, j, row = 0, column = 0, check_column = 0;
-
-    while( (ch=fgetc(infile)) != EOF )
+    char ch, ch_in;
+    if (u->inputFile)
     {
-        //putchar(ch);
-        if (ch != '\n')
+        infile = fopen(u->inputFileName,"rt");
+
+        while( (ch=fgetc(infile)) != EOF )
         {
-            column = column + 1;
+            if (ch != '\n')
+            {
+                column = column + 1;
+            }
+            if (ch == '\n')
+            {
+                if (check_column == 0)
+                {
+                    row = row + 1;
+                    check_column = column;
+                    column = 0;
+                }
+                else if (check_column != column)
+                {
+                    printf("the column is missing\n");
+                    return;
+                }
+                else
+                {
+                    row = row + 1;
+                    check_column = column;
+                    //set the column in the struct universe
+                    u->column = column;
+                    column = 0;
+                }
+            }
         }
-        if (ch == '\n')
+        fseek(infile,0,SEEK_SET);
+
+        //set the row in the struct universe
+        u->row = row;
+
+        u->mat = (int **)malloc(sizeof(int *) * u->row);
+        for (i = 0; i < u->row; ++i)
+        { //distribute every column base on each row
+        	u->mat[i] = (int *)malloc(sizeof(int) * u->column);
+        }
+
+        u->whole_life = u->row * u->column;
+
+        row = 0;
+        column = 0;
+
+        while( (ch_in=fgetc(infile)) != EOF )
         {
-            if (check_column == 0)
+            if (ch_in != '\n')
+            {
+                //printf("%c", ch_in);
+                if (ch_in == '.')
+                {
+                    u->mat[row][column] = 0;
+                }
+                else if (ch_in == '*')
+                {
+                    u->mat[row][column] = 1;
+                }
+                else
+                {
+                    printf("the input file is not correct\n");
+                    return ;
+                }
+                column = column + 1;
+            }
+            if (ch_in == '\n')
             {
                 row = row + 1;
-                check_column = column;
                 column = 0;
             }
-            else if (check_column != column)
+        }
+        printf("successfully read in file!!!\n");
+    }
+    else
+    {
+        //read the command line input
+        char input[MAX][LEN];
+        int check_len = 0;
+        int len;
+        for (i = 0; i < MAX; ++i)
+        {
+            gets(input[i]);
+            if (!*input[i])
             {
-                printf("the column is missing\n");
+                break;
+            }
+
+            if (i == 0)
+            {
+                len = strlen(input[i]);
+                check_len = len;
+            }
+            len = strlen(input[i]);
+            if (check_len != len)
+            {
+                printf("the length is not correct!\n");
                 return;
             }
-            else
-            {
-                row = row + 1;
-                check_column = column;
-                //set the column in the struct universe
-                u->column = column;
-                column = 0;
-            }
         }
-    }
-    fseek(infile,0,SEEK_SET);
+        u->row = i;
+        u->column = len;
 
-    //set the row in the struct universe
-    u->row = row;
+        u->mat = (int **)malloc(sizeof(int *) * u->row);
+        for (i = 0; i < u->row; ++i)
+        { //distribute every column base on each row
+        	u->mat[i] = (int *)malloc(sizeof(int) * u->column);
+        }
+        u->whole_life = u->row * u->column;
 
-    u->mat = (int **)malloc(sizeof(int *) * u->row);
-    for (i = 0; i < row; ++i)
-    { //distribute every column base on each row
-    	u->mat[i] = (int *)malloc(sizeof(int) * u->column);
-    }
 
-    u->whole_life = u->row * u->column;
+        row = 0;
+        column = 0;
 
-    row = 0;
-    column = 0;
-
-    while( (ch_in=fgetc(infile)) != EOF )
-    {
-        if (ch_in != '\n')
+        for (i = 0; i < u->row; ++i)
         {
-            //printf("%c", ch_in);
-            if (ch_in == '.')
+            for (j = 0; j < u->column; ++j)
             {
-                u->mat[row][column] = 0;
+                if (input[i][j] == '.')
+                {
+                    u->mat[i][j] = 0;
+                }
+                else if (input[i][j] == '*')
+                {
+                    u->mat[i][j] = 1;
+                }
+                else
+                {
+                    printf("the input file is not correct\n");
+                    return;
+                }
             }
-            else if (ch_in == '*')
-            {
-                u->mat[row][column] = 1;
-            }
-            else
-            {
-                printf("the input file is not correct\n");
-                return ;
-            }
-            column = column + 1;
         }
-        if (ch_in == '\n')
-        {
-            row = row + 1;
-            column = 0;
-        }
+        printf("input successfully!\n");
     }
-    printf("successfully read in file!!!\n");
 }
 
 void write_out_file (FILE *outfile, struct universe *u)
@@ -321,7 +387,7 @@ int will_be_alive (struct universe *u, int column, int row)
     }
     else if (column == 0)
     {
-    //right most column
+    //left most column
         //top middle
         if (u->mat[row-1][column])
         {
@@ -379,7 +445,7 @@ int will_be_alive (struct universe *u, int column, int row)
     }
     else if (column == u->column - 1)
     {
-    //in the left column
+    //right most column
         //top middle
         if (u->mat[row-1][column])
         {
@@ -555,6 +621,8 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             }
         }
     }
+    printf("alive number%d\n", u->alive_num);
+    return;
 }
 
 void print_statistics (struct universe *u)
