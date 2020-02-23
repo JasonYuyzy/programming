@@ -4,6 +4,7 @@
 #include<getopt.h>
 #include<string.h>
 
+
 #include"gol.h"
 
 int main(int argc, char *argv[])
@@ -37,6 +38,7 @@ int main(int argc, char *argv[])
                     return 0;
                 }
                 u.inputFileName = optarg;
+                u.inputFile = 1;
 
                 i_num = 0;
                 break;
@@ -113,8 +115,7 @@ int main(int argc, char *argv[])
 	//check the option '-i' whether inputed
     if (i_num)
     {
-        printf("the input file name need to be entered!!\n");
-        return 0;
+        u.inputFile = 0;
     }
     if (o_num)
     {
@@ -127,6 +128,10 @@ int main(int argc, char *argv[])
     if (s_num)
     {
         u.print_statistics = 0;
+    }
+    if (g_num)
+    {
+        u.generation_num = 5;
     }
 
     FILE *infile;
