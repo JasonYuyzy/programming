@@ -38,7 +38,6 @@ void read_in_file (FILE *infile, struct universe *u)
     if (u->inputFile)
     {
         infile = fopen(u->inputFileName,"rt");
-
         while( (ch=fgetc(infile)) != EOF )
         {
             if (ch != '\n')
@@ -69,7 +68,6 @@ void read_in_file (FILE *infile, struct universe *u)
             }
         }
         fseek(infile,0,SEEK_SET);
-
         //set the row in the struct universe
         u->row = row;
 
@@ -88,7 +86,7 @@ void read_in_file (FILE *infile, struct universe *u)
         {
             if (ch_in != '\n')
             {
-                //printf("%c", ch_in);
+                printf("%c", ch_in);
                 if (ch_in == '.')
                 {
                     u->mat[row][column] = 0;
@@ -359,7 +357,6 @@ int will_be_alive (struct universe *u, int column, int row)
         //left
         if (u->mat[row][column-1])
         {
-            printf("check this\n");
             alive = alive + 1;
         }
         //right
@@ -586,7 +583,6 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
     struct universe u_will;
     int check, i, j, self_alive;
 
-    //int will[u->row][u->column];
 
     u_will.mat = (int **)malloc(sizeof(int *) * u->row);
     for (i = 0; i < u->row; ++i)
@@ -594,43 +590,48 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
         u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
     }
 
+/*
     for (i = 0; i < u->row; ++i)
     {
         for (j = 0; i < u->column; ++j)
         {
             u_will.mat[i][j] = u->mat[i][j];
         }
-    }
+    }*/
 
-    //u_will.mat = will;
     u_will.column = u->column;
     u_will.row = u->row;
-    printf("column and row %d, %d\n", u_will.column, u_will.row);
 
     for (i = 0; i < u->row; ++i)
     {
         for (j = 0; j < u->column; ++j)
         {
-            printf("check will matrix: %d\n", u_will.mat[0][2]);
-            check = rule( &u_will, j, i);
-            printf("check number %d\n", check);
-            self_alive = is_alive ( &u_will, j, i);
+            //check = rule( &u_will, j, i);
+            check = rule( u, j, i);
+            //printf("check number %d\n", check);
+            //self_alive = is_alive ( &u_will, j, i);
+            self_alive = is_alive ( u, j, i);
             if (check >= 3 && self_alive == 0)
             {
                 u->alive_num = u->alive_num + 1;
-                u->mat[i][j] = 1;
+                //u->mat[i][j] = 1;
+                u_will.mat[i][j] = 1;
             }
             else if (check >= 2 && self_alive == 1)
             {
                 u->alive_num = u->alive_num + 1;
-                u->mat[i][j] = 1;
+                //u->mat[i][j] = 1;
+                u_will.mat[i][j] = 1;
             }
             else
             {
-                u->mat[i][j] = 0;
+                //u->mat[i][j] = 0;
+                u_will.mat[i][j] = 0;
             }
         }
     }
+
+    u->mat = u_will.mat;
     printf("alive number%d\n", u->alive_num);
 }
 
