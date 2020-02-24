@@ -1,4 +1,8 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
 
+#include"gol.h"
 
 #define MAX 100
 #define LEN 800

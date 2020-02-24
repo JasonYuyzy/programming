@@ -1,9 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<unistd.h>
 #include<getopt.h>
 #include<string.h>
-
 
 #include"gol.h"
 
@@ -134,8 +132,9 @@ int main(int argc, char *argv[])
         u.generation_num = 5;
     }
 
-    FILE *infile;
-    FILE *outfile;
+    FILE *infile = NULL;
+    FILE *outfile = NULL;
+
     u.column = 0;
     u.row = 0;
 
@@ -156,7 +155,7 @@ int main(int argc, char *argv[])
         else
         {
             evolve(&u,will_be_alive);
-            //print_statistics (&u);
+            print_statistics (&u);
         }
         //printf("%f of the cells currently alive \n", u.statistic);
         write_out_file(outfile, &u);
