@@ -10,6 +10,7 @@
 void read_in_file (FILE *infile, struct universe *u)
 {
     //read the file and get the row and column
+
     int i, j, row = 0, column = 0, check_column = 0;
     char ch, ch_in;
     if (u->inputFile)
