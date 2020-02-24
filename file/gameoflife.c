@@ -140,6 +140,7 @@ int main(int argc, char *argv[])
     u.row = 0;
 
     read_in_file(infile, &u);
+
     u.alive_num = 0;
     u.alive_average = 0;
     u.statistic = 0;
@@ -154,9 +155,8 @@ int main(int argc, char *argv[])
         }
         else
         {
-            write_out_file(outfile, &u);
             evolve(&u,will_be_alive);
-            print_statistics (&u);
+            //print_statistics (&u);
         }
         //printf("%f of the cells currently alive \n", u.statistic);
         write_out_file(outfile, &u);
