@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
         }
         else
         {
+            write_out_file(outfile, &u);
             evolve(&u,will_be_alive);
             print_statistics (&u);
         }
