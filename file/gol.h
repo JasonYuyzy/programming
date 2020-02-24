@@ -26,7 +26,7 @@ void evolve(struct universe *u, int (*rule)(struct universe *u, int column, int 
 void print_statistics(struct universe *u);
 /*You can modify after this line again*/
 
-
+/*
 #define MAX 100
 #define LEN 800
 
@@ -86,7 +86,7 @@ void read_in_file (FILE *infile, struct universe *u)
         {
             if (ch_in != '\n')
             {
-                printf("%c", ch_in);
+                //printf("%c", ch_in);
                 if (ch_in == '.')
                 {
                     u->mat[row][column] = 0;
@@ -590,15 +590,6 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
         u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
     }
 
-/*
-    for (i = 0; i < u->row; ++i)
-    {
-        for (j = 0; i < u->column; ++j)
-        {
-            u_will.mat[i][j] = u->mat[i][j];
-        }
-    }*/
-
     u_will.column = u->column;
     u_will.row = u->row;
 
@@ -632,6 +623,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
     }
 
     u->mat = u_will.mat;
+
     printf("alive number%d\n", u->alive_num);
 }
 
@@ -642,3 +634,4 @@ void print_statistics (struct universe *u)
     u->alive_num = 0;
 }
 
+*/
