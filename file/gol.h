@@ -276,9 +276,6 @@ int is_alive (struct universe *u, int column, int row)
 
 int will_be_alive (struct universe *u, int column, int row)
 {
-	struct universe check;
-    check.mat = u->mat;
-	
 	int alive = 0;
     if (row == 0 && column == 0)
     {
@@ -362,6 +359,7 @@ int will_be_alive (struct universe *u, int column, int row)
         //left
         if (u->mat[row][column-1])
         {
+            printf("check this\n");
             alive = alive + 1;
         }
         //right
@@ -516,19 +514,7 @@ int will_be_alive (struct universe *u, int column, int row)
         }
     }
 
-    int self_alive = is_alive ( &check, column, row);
-    if ( self_alive && alive >= 2)
-    {
-        return 1;
-    }
-    else if ( !self_alive && alive >= 3)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return alive;
 }
 
 int will_be_alive_torus (struct universe *u, int column, int row)
@@ -598,19 +584,43 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
     struct universe u_will;
-    int check, i, j;
+    int check, i, j, self_alive;
 
-    u_will.mat = u->mat;
+    //int will[u->row][u->column];
+
+    u_will.mat = (int **)malloc(sizeof(int *) * u->row);
+    for (i = 0; i < u->row; ++i)
+    { //distribute every column base on each row
+        u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
+    }
+
+    for (i = 0; i < u->row; ++i)
+    {
+        for (j = 0; i < u->column; ++j)
+        {
+            u_will.mat[i][j] = u->mat[i][j];
+        }
+    }
+
+    //u_will.mat = will;
     u_will.column = u->column;
     u_will.row = u->row;
+    printf("column and row %d, %d\n", u_will.column, u_will.row);
 
     for (i = 0; i < u->row; ++i)
     {
         for (j = 0; j < u->column; ++j)
         {
-            check = 0;
+            printf("check will matrix: %d\n", u_will.mat[0][2]);
             check = rule( &u_will, j, i);
-            if (check)
+            printf("check number %d\n", check);
+            self_alive = is_alive ( &u_will, j, i);
+            if (check >= 3 && self_alive == 0)
+            {
+                u->alive_num = u->alive_num + 1;
+                u->mat[i][j] = 1;
+            }
+            else if (check >= 2 && self_alive == 1)
             {
                 u->alive_num = u->alive_num + 1;
                 u->mat[i][j] = 1;
@@ -622,7 +632,6 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
         }
     }
     printf("alive number%d\n", u->alive_num);
-    return;
 }
 
 void print_statistics (struct universe *u)
