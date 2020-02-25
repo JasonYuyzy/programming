@@ -9,15 +9,10 @@ int main(int argc, char *argv[])
 {
     struct universe u;
 
-    int opt, use_torus=0;
+    int opt, use_torus=0, print_stat=0, generation_num=0;
 
     char *optstr = "i:o:g:st";
-    if (argc == 1)
-    {
-        printf("please enter the code ' -i input_fileName -o output_fileName -g number_of_generations -g -s'follow!!! \n");
-        return 0;
-    }
-	//set the numbr to check the command line option
+	//set the number to check the command line option
     int i_num=1, o_num=1, g_num=1, s_num=1, t_num=1;
     while ((opt = getopt(argc, argv, optstr))!= -1)
     {
@@ -74,7 +69,7 @@ int main(int argc, char *argv[])
 					printf("wrong input command line: please input the correct number of generation!\n");
 					return 0;
 				}
-                u.generation_num = atoi(optarg);
+                generation_num = atoi(optarg);
                 g_num = 0;
                 break;
             case 's':
@@ -84,7 +79,7 @@ int main(int argc, char *argv[])
                     return 0;
                 }
 
-                u.print_statistics = 1;
+                print_stat = 1;
                 s_num = 0;
                 break;
             case 't':
@@ -125,11 +120,11 @@ int main(int argc, char *argv[])
     }
     if (s_num)
     {
-        u.print_statistics = 0;
+        print_stat = 0;
     }
     if (g_num)
     {
-        u.generation_num = 5;
+        generation_num = 5;
     }
 
     FILE *infile = NULL;
@@ -142,10 +137,9 @@ int main(int argc, char *argv[])
 
     u.alive_num = 0;
     u.alive_average = 0;
-    statistic = 0;
     u.alive_average = 0;
 
-    for (int i = 0; i < u.generation_num; ++i)
+    for (int i = 0; i < generation_num; ++i)
     {
         if (use_torus)
         {
@@ -156,7 +150,7 @@ int main(int argc, char *argv[])
             evolve(&u,will_be_alive);
 		}
 		
-		if (statistic)
+		if (print_stat)
 		{
 			print_statistics (&u);
 		}
@@ -164,7 +158,7 @@ int main(int argc, char *argv[])
         //write_out_file(outfile, &u);
     }
 	
-	if (statistic)
+	if (print_stat)
 	{
 		printf("%f of cells alive on average\n", u.alive_average);
 	}
