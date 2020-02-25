@@ -86,6 +86,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 column = 0;
             }
         }
+		fclose(infile);
         printf("successfully read in file!!!\n");
     }
     else
@@ -123,7 +124,6 @@ void read_in_file (FILE *infile, struct universe *u)
         	u->mat[i] = (int *)malloc(sizeof(int) * u->column);
         }
         u->whole_life = u->row * u->column;
-
 
         row = 0;
         column = 0;
@@ -195,8 +195,6 @@ void write_out_file (FILE *outfile, struct universe *u)
         {
             free(*(u->mat + i));
         }
-
-
 	}
 	else
 	{
@@ -253,38 +251,36 @@ int is_alive (struct universe *u, int column, int row)
 int will_be_alive (sturct universe *u, int column, int row)
 {
 	int alive=0, i=0, j=0;
-	int self_alive = is_alive(u, column, row);
-	//top left
 	if (row == 0 && column == 0)
-	{
+	{//top left
 		alive = alive + u->mat[0][0];
 		alive = alive + u->mat[0][1];
 		alive = alive + u->mat[1][0];
 		alive = alive + u->mat[1][1];
 	}
 	else if (row == 0 && column == u->column-1)
-	{
+	{//top right
 		alive = alive + u->mat[0][column-1];
 		alive = alive + u->mat[0][column];
 		alive = alive + u->mat[1][column-1];
 		alive = alive + u->mat[1][column];
 	}
 	else if (row == u->row - 1 && column == 0)
-	{
+	{//button left
 		alive = alive + u->mat[row-1][column];
 		alive = alive + u->mat[row-1][column+1];
 		alive = alive + u->mat[row][column];
 		alive = alive + u->mat[row][column+1];
 	}
 	else if (row == u->row - 1 && column == u->column - 1)
-	{
+	{//button right
 		alive = alive + u->mat[row-1][column-1];
 		alive = alive + u->mat[row-1][column];
 		alive = alive + u->mat[row][column-1];
 		alive = alive + u->mat[row][column];
 	}
 	else if (row == 0)
-	{
+	{//top row
 		for (i = row; i<= row + 1; ++i)
 		{
 			for (j = column - 1; j <= column + 1; ++j)
@@ -294,7 +290,7 @@ int will_be_alive (sturct universe *u, int column, int row)
 		}		
 	}
 	else if (column == 0)
-	{
+	{//leftmost column
 		for (i = row - 1; i <= row + 1; ++i)
 		{
 			for (j = column; i <= column + 1; ++j)
@@ -303,7 +299,7 @@ int will_be_alive (sturct universe *u, int column, int row)
 		}
 	}
 	else if (row == u->row - 1)
-	{
+	{//button row
 		for (i = row - 1; i <= row; ++i)
 		{
 			for (j = column - 1; j <= column + 1; ++j)
@@ -313,7 +309,7 @@ int will_be_alive (sturct universe *u, int column, int row)
 		}
 	}
 	else if (column == u->column - 1)
-	{
+	{//rightmost column
 		for (i = row - 1; i <= row + 1)
 		{
 			for (j = column - 1; j <= column; ++j)
@@ -323,7 +319,7 @@ int will_be_alive (sturct universe *u, int column, int row)
 		}
 	}
 	else
-	{
+	{//normal
 		for (i = row - 1; i <= row + 1; ++i)
 		{
 			for (j = column - 1; j <= column + 1; ++j)
@@ -333,25 +329,12 @@ int will_be_alive (sturct universe *u, int column, int row)
 		}
 	}
 	
-	if (alive == 3 && self_alive == 0)
-	{
-		return 1;
-	}
-	else if ((alive == 2 || alive == 3) && self_alive == 1)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+	return alive;
 }
 
 int will_be_alive_torus (struct universe *u, int column, int row)
 {
 	int alive=0, i=0, j=0;
-	int self_alive = is_alive(u, column, row);
-	
 	for (i = row - 1; i <= row + 1; ++i)
 	{
 		for (j = column - 1; j <= column + 1; ++j)
@@ -359,19 +342,7 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 			alive = alive + u->mat[(i+u->row)%u->row][(j+u->column)%u->column)];
 		}
 	}
-	
-	if (self_alive == 1 && (alive == 2 || alive == 3))
-	{
-		return 1;
-	}
-	else if (self_alive == 0 && alive == 3)
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
+	return alive;
 }
 
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
@@ -385,40 +356,48 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
     { //distribute every column base on each row
         u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
     }
+	
+	//try
+	int **will;
+	will = (int **)malloc(sizeof(int *) * u->row);
+	for (i = 0; i < u->row; ++i)
+    { //distribute every column base on each row
+        will[i] = (int *)malloc(sizeof(int) * u->column);
+    }
+	
 
-    u_will.column = u->column;
-    u_will.row = u->row;
+    //u_will.column = u->column;
+    //u_will.row = u->row;
 
     for (i = 0; i < u->row; ++i)
     {
         for (j = 0; j < u->column; ++j)
         {
-            //check = rule( &u_will, j, i);
             check = rule( u, j, i);
-            //printf("check number %d\n", check);
-            //self_alive = is_alive ( &u_will, j, i);
             self_alive = is_alive ( u, j, i);
-            if (check >= 3 && self_alive == 0)
+            if (check == 3 && self_alive == 0)
             {
                 u->alive_num = u->alive_num + 1;
-                //u->mat[i][j] = 1;
+                //will[i][j] = 1;
                 u_will.mat[i][j] = 1;
             }
-            else if (check >= 2 && self_alive == 1)
+            else if ((check == 3 || check == 4) && self_alive == 1)
             {
                 u->alive_num = u->alive_num + 1;
-                //u->mat[i][j] = 1;
+                //will[i][j] = 1;
                 u_will.mat[i][j] = 1;
             }
             else
             {
-                //u->mat[i][j] = 0;
+                //will[i][j] = 0;
                 u_will.mat[i][j] = 0;
             }
         }
     }
 
     u->mat = u_will.mat;
+	
+	u->mat = will;
 /*
 
 
@@ -432,6 +411,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
 void print_statistics (struct universe *u)
 {
     u->statistic = u->alive_num / u->whole_life;
+	printf("%f of cells currently alive\n", u->statistic);
     u->alive_average = u->alive_average + u->statistic/u->generation_num;
     u->alive_num = 0;
 }
