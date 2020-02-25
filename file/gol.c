@@ -4,7 +4,7 @@
 
 #include"gol.h"
 
-#define MAX 100
+#define MAX 800
 #define LEN 800
 
 void read_in_file (FILE *infile, struct universe *u)
@@ -250,6 +250,193 @@ int is_alive (struct universe *u, int column, int row)
     }
 }
 
+int will_be_alive (sturct universe *u, int column, int row)
+{
+	int alive=0, i=0, j=0;
+	int self_alive = is_alive(u, column, row);
+	//top left
+	if (row == 0 && column == 0)
+	{
+		alive = alive + u->mat[0][0];
+		alive = alive + u->mat[0][1];
+		alive = alive + u->mat[1][0];
+		alive = alive + u->mat[1][1];
+	}
+	else if (row == 0 && column == u->column-1)
+	{
+		alive = alive + u->mat[0][column-1];
+		alive = alive + u->mat[0][column];
+		alive = alive + u->mat[1][column-1];
+		alive = alive + u->mat[1][column];
+	}
+	else if (row == u->row - 1 && column == 0)
+	{
+		alive = alive + u->mat[row-1][column];
+		alive = alive + u->mat[row-1][column+1];
+		alive = alive + u->mat[row][column];
+		alive = alive + u->mat[row][column+1];
+	}
+	else if (row == u->row - 1 && column == u->column - 1)
+	{
+		alive = alive + u->mat[row-1][column-1];
+		alive = alive + u->mat[row-1][column];
+		alive = alive + u->mat[row][column-1];
+		alive = alive + u->mat[row][column];
+	}
+	else if (row == 0)
+	{
+		for (i = row; i<= row + 1; ++i)
+		{
+			for (j = column - 1; j <= column + 1; ++j)
+			{
+				alive = alive + u->mat[i][j];
+			}
+		}		
+	}
+	else if (column == 0)
+	{
+		for (i = row - 1; i <= row + 1; ++i)
+		{
+			for (j = column; i <= column + 1; ++j)
+			{
+				alive = alive + u->mat[i][j];
+		}
+	}
+	else if (row == u->row - 1)
+	{
+		for (i = row - 1; i <= row; ++i)
+		{
+			for (j = column - 1; j <= column + 1; ++j)
+			{
+				alive = alive + u->mat[i][j];
+			}
+		}
+	}
+	else if (column == u->column - 1)
+	{
+		for (i = row - 1; i <= row + 1)
+		{
+			for (j = column - 1; j <= column; ++j)
+			{
+				alive = alive + u->mat[i][j];
+			}
+		}
+	}
+	else
+	{
+		for (i = row - 1; i <= row + 1; ++i)
+		{
+			for (j = column - 1; j <= column + 1; ++j)
+			{
+				alive = alive + u->mat[i][j];
+			}
+		}
+	}
+	
+	if (alive == 3 && self_alive == 0)
+	{
+		return 1;
+	}
+	else if ((alive == 2 || alive == 3) && self_alive == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+int will_be_alive_torus (struct universe *u, int column, int row)
+{
+	int alive=0, i=0, j=0;
+	int self_alive = is_alive(u, column, row);
+	
+	for (i = row - 1; i <= row + 1; ++i)
+	{
+		for (j = column - 1; j <= column + 1; ++j)
+		{
+			alive = alive + u->mat[(i+u->row)%u->row][(j+u->column)%u->column)];
+		}
+	}
+	
+	if (self_alive == 1 && (alive == 2 || alive == 3))
+	{
+		return 1;
+	}
+	else if (self_alive == 0 && alive == 3)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
+{
+    struct universe u_will;
+    int check, i, j, self_alive;
+
+
+    u_will.mat = (int **)malloc(sizeof(int *) * u->row);
+    for (i = 0; i < u->row; ++i)
+    { //distribute every column base on each row
+        u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
+    }
+
+    u_will.column = u->column;
+    u_will.row = u->row;
+
+    for (i = 0; i < u->row; ++i)
+    {
+        for (j = 0; j < u->column; ++j)
+        {
+            //check = rule( &u_will, j, i);
+            check = rule( u, j, i);
+            //printf("check number %d\n", check);
+            //self_alive = is_alive ( &u_will, j, i);
+            self_alive = is_alive ( u, j, i);
+            if (check >= 3 && self_alive == 0)
+            {
+                u->alive_num = u->alive_num + 1;
+                //u->mat[i][j] = 1;
+                u_will.mat[i][j] = 1;
+            }
+            else if (check >= 2 && self_alive == 1)
+            {
+                u->alive_num = u->alive_num + 1;
+                //u->mat[i][j] = 1;
+                u_will.mat[i][j] = 1;
+            }
+            else
+            {
+                //u->mat[i][j] = 0;
+                u_will.mat[i][j] = 0;
+            }
+        }
+    }
+
+    u->mat = u_will.mat;
+/*
+
+
+    for (int i = 0; i < u->row; ++i)
+    {
+        free(*(u_will.mat + i));
+    }*/
+    printf("alive number%d\n", u->alive_num);
+}
+
+void print_statistics (struct universe *u)
+{
+    u->statistic = u->alive_num / u->whole_life;
+    u->alive_average = u->alive_average + u->statistic/u->generation_num;
+    u->alive_num = 0;
+}
+
+/*
 int will_be_alive (struct universe *u, int column, int row)
 {
 	int alive = 0;
@@ -554,75 +741,4 @@ int will_be_alive_torus (struct universe *u, int column, int row)
     {
         return 0;
     }
-}
-
-void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
-{
-    struct universe u_will;
-    int check, i, j, self_alive;
-
-
-    u_will.mat = (int **)malloc(sizeof(int *) * u->row);
-    for (i = 0; i < u->row; ++i)
-    { //distribute every column base on each row
-        u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
-    }
-/*
-
-    for (i = 0; i < u->row; ++i)
-    {
-        for (j = 0; i < u->column; ++j)
-        {
-            u_will.mat[i][j] = u->mat[i][j];
-        }
-    }*/
-
-    u_will.column = u->column;
-    u_will.row = u->row;
-
-    for (i = 0; i < u->row; ++i)
-    {
-        for (j = 0; j < u->column; ++j)
-        {
-            //check = rule( &u_will, j, i);
-            check = rule( u, j, i);
-            //printf("check number %d\n", check);
-            //self_alive = is_alive ( &u_will, j, i);
-            self_alive = is_alive ( u, j, i);
-            if (check >= 3 && self_alive == 0)
-            {
-                u->alive_num = u->alive_num + 1;
-                //u->mat[i][j] = 1;
-                u_will.mat[i][j] = 1;
-            }
-            else if (check >= 2 && self_alive == 1)
-            {
-                u->alive_num = u->alive_num + 1;
-                //u->mat[i][j] = 1;
-                u_will.mat[i][j] = 1;
-            }
-            else
-            {
-                //u->mat[i][j] = 0;
-                u_will.mat[i][j] = 0;
-            }
-        }
-    }
-
-    u->mat = u_will.mat;
-/*
-
-
-    for (int i = 0; i < u->row; ++i)
-    {
-        free(*(u_will.mat + i));
-    }*/
-    printf("alive number%d\n", u->alive_num);
-}
-
-void print_statistics (struct universe *u)
-{
-    u->statistic = u->alive_num / u->whole_life;
-    u->alive_average = u->alive_average + u->statistic/u->generation_num;
-    u->alive_num = 0;
-}
+}*/
