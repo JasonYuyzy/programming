@@ -9,12 +9,10 @@ struct universe
 	char *outputFileName;
 	int inputFile;
 	int outputFile;
-	int generation_num;
 	int alive_num;
 	float alive_average;
 	int whole_life;
 	float statistic;
-	int print_statistics;
 };
 
 /*Do not modify the next seven lines*/
