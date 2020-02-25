@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
 					return 0;
 				}
                 generation_num = atoi(optarg);
+                u.generation_num = generation_num;
                 g_num = 0;
                 break;
             case 's':
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
     if (g_num)
     {
         generation_num = 5;
+        u.generation_num = generation_num;
     }
 
     FILE *infile = NULL;

@@ -248,7 +248,7 @@ int is_alive (struct universe *u, int column, int row)
     }
 }
 
-int will_be_alive (sturct universe *u, int column, int row)
+int will_be_alive (struct universe *u, int column, int row)
 {
 	int alive=0, i=0, j=0;
 	if (row == 0 && column == 0)
@@ -293,9 +293,10 @@ int will_be_alive (sturct universe *u, int column, int row)
 	{//leftmost column
 		for (i = row - 1; i <= row + 1; ++i)
 		{
-			for (j = column; i <= column + 1; ++j)
+			for (j = column; j <= column + 1; ++j)
 			{
 				alive = alive + u->mat[i][j];
+		    }
 		}
 	}
 	else if (row == u->row - 1)
@@ -310,7 +311,7 @@ int will_be_alive (sturct universe *u, int column, int row)
 	}
 	else if (column == u->column - 1)
 	{//rightmost column
-		for (i = row - 1; i <= row + 1)
+		for (i = row - 1; i <= row + 1; ++i)
 		{
 			for (j = column - 1; j <= column; ++j)
 			{
@@ -339,7 +340,7 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 	{
 		for (j = column - 1; j <= column + 1; ++j)
 		{
-			alive = alive + u->mat[(i+u->row)%u->row][(j+u->column)%u->column)];
+			alive = alive + u->mat[(i+u->row)%u->row][(j+u->column)%u->column];
 		}
 	}
 	return alive;
@@ -347,17 +348,18 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
-    struct universe u_will;
+    //struct universe u_will;
     int check, i, j, self_alive;
 
-
+/*
+    //first edition use the universe matrix
     u_will.mat = (int **)malloc(sizeof(int *) * u->row);
     for (i = 0; i < u->row; ++i)
     { //distribute every column base on each row
         u_will.mat[i] = (int *)malloc(sizeof(int) * u->column);
-    }
+    }*/
 	
-	//try
+	//second use the local matrix
 	int **will;
 	will = (int **)malloc(sizeof(int *) * u->row);
 	for (i = 0; i < u->row; ++i)
@@ -378,39 +380,40 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             if (check == 3 && self_alive == 0)
             {
                 u->alive_num = u->alive_num + 1;
-                //will[i][j] = 1;
-                u_will.mat[i][j] = 1;
+                will[i][j] = 1;
+                //u_will.mat[i][j] = 1;
             }
             else if ((check == 3 || check == 4) && self_alive == 1)
             {
                 u->alive_num = u->alive_num + 1;
-                //will[i][j] = 1;
-                u_will.mat[i][j] = 1;
+                will[i][j] = 1;
+                //u_will.mat[i][j] = 1;
             }
             else
             {
-                //will[i][j] = 0;
-                u_will.mat[i][j] = 0;
+                will[i][j] = 0;
+                //u_will.mat[i][j] = 0;
             }
         }
     }
 
-    u->mat = u_will.mat;
+    //u->mat = u_will.mat;
 	
 	u->mat = will;
+
+
 /*
-
-
     for (int i = 0; i < u->row; ++i)
     {
-        free(*(u_will.mat + i));
+        free(*(will + i));
     }*/
     printf("alive number%d\n", u->alive_num);
 }
 
 void print_statistics (struct universe *u)
 {
-    u->statistic = u->alive_num / u->whole_life;
+    u->statistic = u->alive_num/u->whole_life;
+    printf("whole %d, %d\n", u->whole_life, u->alive_num);
 	printf("%f of cells currently alive\n", u->statistic);
     u->alive_average = u->alive_average + u->statistic/u->generation_num;
     u->alive_num = 0;
