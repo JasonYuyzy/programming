@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     struct universe u;
 
-    int opt, use_torus=0, print_stat=0, keep_going=0;
+    int opt, use_torus=0, print_stat=0;
 
     char *optstr = "i:o:g:st";
 	//set the number to check the command line option
@@ -130,19 +130,14 @@ int main(int argc, char *argv[])
     FILE *infile = NULL;
     FILE *outfile = NULL;
 
-    u.column = 0;
-    u.row = 0;
-
-    keep_going = read_in_file(infile, &u);
-	if (!keep_going)
-	{
-		printf("The Game of Life is closing...\n");
-		return 0;
-	}
-
     u.alive_num = 0;
     u.alive_average = 0;
     u.alive_average = 0;
+
+    u.column = 0;
+    u.row = 0;
+
+    read_in_file(infile, &u);
 
     for (int i = 0; i < u.generation_num; ++i)
     {
@@ -171,6 +166,8 @@ int main(int argc, char *argv[])
 
     write_out_file(outfile, &u);
 
+    //free the matrix will and exit(0);
+    u.finished = 1;
+    evolve( &u, will_be_alive);
 
-    return 0;
 }

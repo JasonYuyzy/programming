@@ -16,16 +16,16 @@ void read_in_file (FILE *infile, struct universe *u)
     if (u->inputFile)
     {
 		char *include = ".txt";
-		if (!strstr (u->inputFileName, include)
+		if (!strstr (u->inputFileName, include))
 		{
 			printf("The input file name need to include with .txt, please try again!\n");
-			return 0;
+			exit(0);
 		}
         infile = fopen(u->inputFileName,"rt");
-		if （infile == NULL)
+		if (infile == NULL)
 		{
 			printf("The input file is not exist! Please try another one!\n");
-			return 0;
+			exit(0);
 		}
         while( (ch=fgetc(infile)) != EOF )
         {
@@ -44,7 +44,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 else if (check_column != column)
                 {
                     printf("Some of the row is different from others\n");
-                    return 0;
+                    exit(0);
                 }
                 else
                 {
@@ -61,7 +61,7 @@ void read_in_file (FILE *infile, struct universe *u)
 		if (row == 0)
 		{
 			printf("The file is empty!\n");
-			return 0;
+			exit(0);
 		}
         //set the row in the struct universe
         u->row = row;
@@ -93,7 +93,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 else
                 {
                     printf("the input file is not correct\n");
-                    return ;
+                    exit(0);
                 }
                 column = column + 1;
             }
@@ -129,14 +129,14 @@ void read_in_file (FILE *infile, struct universe *u)
             if (check_len != len)
             {
                 printf("the length is not correct!\n");
-                return 0;
+                exit(0);
             }
         }
 		
 		if (i == 0)
 		{
 			printf("Nothing inputed!\n");
-			return 0;
+			exit(0);
 		}
         u->row = i;
         u->column = len;
@@ -166,13 +166,13 @@ void read_in_file (FILE *infile, struct universe *u)
                 else
                 {
                     printf("the input file is not correct\n");
-                    return 0;
+                    exit(0);
                 }
             }
         }
         printf("input successfully!\n");
     }
-	return 1;
+	return;
 }
 
 void write_out_file (FILE *outfile, struct universe *u)
@@ -390,7 +390,15 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
     { //distribute every column base on each row
         will[i] = (int *)malloc(sizeof(int) * u->column);
     }
-	
+
+    if (u->finished)
+     {
+        for (int i = 0; i < u->row; ++i)
+        {
+            free(*(will + i));
+        }
+        exit(0);
+    }
 
     //u_will.column = u->column;
     //u_will.row = u->row;
@@ -427,21 +435,11 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
 	u->mat = will;
 	
 	count = count + 1;
-	if (count == u->generation_num)
-	{
-		for (int i = 0; i < u->row; ++i)
-        {
-            free(*(will + i));
-        }
-	}
-
-
 /*
     for (int i = 0; i < u->row; ++i)
     {
         free(*(will + i));
     }*/
-    printf("alive number%d\n", u->alive_num);
 }
 
 void print_statistics (struct universe *u)
