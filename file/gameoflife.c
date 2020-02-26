@@ -132,8 +132,6 @@ int main(int argc, char *argv[])
 
     u.alive_num = 0;
     u.alive_average = 0;
-    u.alive_average = 0;
-
     u.column = 0;
     u.row = 0;
 
@@ -160,7 +158,7 @@ int main(int argc, char *argv[])
 	
 	if (print_stat)
 	{
-		printf("%f of cells alive on average\n", u.alive_average);
+		printf("%.3f of cells alive on average\n", u.alive_average);
 	}
 
 

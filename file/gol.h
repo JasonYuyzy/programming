@@ -10,10 +10,10 @@ struct universe
 	int inputFile;
 	int outputFile;
 	int keep_going;
-	int generation_num;
-	int alive_num;
+	float generation_num;
+	float alive_num;
 	float alive_average;
-	int whole_life;
+	float whole_life;
 	float statistic;
 	int finished;
 };

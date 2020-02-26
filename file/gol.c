@@ -445,8 +445,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
 void print_statistics (struct universe *u)
 {
     u->statistic = u->alive_num/u->whole_life;
-    printf("whole %d, %d\n", u->whole_life, u->alive_num);
-	printf("%f of cells currently alive\n", u->statistic);
+	printf("%.3f of cells currently alive\n", u->statistic);
     u->alive_average = u->alive_average + u->statistic/u->generation_num;
     u->alive_num = 0;
 }
