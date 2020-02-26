@@ -15,7 +15,18 @@ void read_in_file (FILE *infile, struct universe *u)
     char ch, ch_in;
     if (u->inputFile)
     {
+		char *include = ".txt";
+		if (!strstr (u->inputFileName, include)
+		{
+			printf("The input file name need to include with .txt, please try again!\n");
+			return 0;
+		}
         infile = fopen(u->inputFileName,"rt");
+		if （infile == NULL)
+		{
+			printf("The input file is not exist! Please try another one!\n");
+			return 0;
+		}
         while( (ch=fgetc(infile)) != EOF )
         {
             if (ch != '\n')
@@ -32,8 +43,8 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
                 else if (check_column != column)
                 {
-                    printf("the column is missing\n");
-                    return;
+                    printf("Some of the row is different from others\n");
+                    return 0;
                 }
                 else
                 {
@@ -46,6 +57,12 @@ void read_in_file (FILE *infile, struct universe *u)
             }
         }
         fseek(infile,0,SEEK_SET);
+		
+		if (row == 0)
+		{
+			printf("The file is empty!\n");
+			return 0;
+		}
         //set the row in the struct universe
         u->row = row;
 
@@ -112,9 +129,15 @@ void read_in_file (FILE *infile, struct universe *u)
             if (check_len != len)
             {
                 printf("the length is not correct!\n");
-                return;
+                return 0;
             }
         }
+		
+		if (i == 0)
+		{
+			printf("Nothing inputed!\n");
+			return 0;
+		}
         u->row = i;
         u->column = len;
 
@@ -143,12 +166,13 @@ void read_in_file (FILE *infile, struct universe *u)
                 else
                 {
                     printf("the input file is not correct\n");
-                    return;
+                    return 0;
                 }
             }
         }
         printf("input successfully!\n");
     }
+	return 1;
 }
 
 void write_out_file (FILE *outfile, struct universe *u)
@@ -229,10 +253,10 @@ void write_out_file (FILE *outfile, struct universe *u)
 			}
 		}
 		//free the matrix
-        //for (int i = 0; i < u->row; ++i)
-        //{
+        for (int i = 0; i < u->row; ++i)
+        {
             //free(*(u->mat + i));
-        //}
+        }
 	}
 }
 
@@ -349,7 +373,7 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
     //struct universe u_will;
-    int check, i, j, self_alive;
+    int check, i, j, self_alive, count=0;
 
 /*
     //first edition use the universe matrix
@@ -396,10 +420,20 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
             }
         }
     }
+	
+	
 
     //u->mat = u_will.mat;
-	
 	u->mat = will;
+	
+	count = count + 1;
+	if (count == u->generation_num)
+	{
+		for (int i = 0; i < u->row; ++i)
+        {
+            free(*(will + i));
+        }
+	}
 
 
 /*

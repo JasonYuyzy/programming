@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     struct universe u;
 
-    int opt, use_torus=0, print_stat=0, generation_num=0;
+    int opt, use_torus=0, print_stat=0, keep_going=0;
 
     char *optstr = "i:o:g:st";
 	//set the number to check the command line option
@@ -69,8 +69,7 @@ int main(int argc, char *argv[])
 					printf("wrong input command line: please input the correct number of generation!\n");
 					return 0;
 				}
-                generation_num = atoi(optarg);
-                u.generation_num = generation_num;
+                u.generation_num = atoi(optarg);
                 g_num = 0;
                 break;
             case 's':
@@ -125,8 +124,7 @@ int main(int argc, char *argv[])
     }
     if (g_num)
     {
-        generation_num = 5;
-        u.generation_num = generation_num;
+        u.generation_num = 5;
     }
 
     FILE *infile = NULL;
@@ -135,13 +133,18 @@ int main(int argc, char *argv[])
     u.column = 0;
     u.row = 0;
 
-    read_in_file(infile, &u);
+    keep_going = read_in_file(infile, &u);
+	if (!keep_going)
+	{
+		printf("The Game of Life is closing...\n");
+		return 0;
+	}
 
     u.alive_num = 0;
     u.alive_average = 0;
     u.alive_average = 0;
 
-    for (int i = 0; i < generation_num; ++i)
+    for (int i = 0; i < u.generation_num; ++i)
     {
         if (use_torus)
         {
