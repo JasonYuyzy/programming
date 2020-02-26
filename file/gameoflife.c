@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    char *optstr = "i:o:g:st";
+    char *optstr = "i:o:g:st", *include = ".txt";;
 	//set the number to check the command line option
     int i_num=1, o_num=1, g_num=1, s_num=1, t_num=1;
     while ((opt = getopt(argc, argv, optstr))!= -1)
@@ -62,6 +62,12 @@ int main(int argc, char *argv[])
                 u.inputFileName = optarg;
                 u.inputFile = 1;
 
+                if (!strstr (u.inputFileName, include))
+        		{
+        			printf("The input file name need to include with '.txt', please try again!\n");
+        			exit(0);
+        		}
+
                 i_num = 0;
                 break;
             case 'o':
@@ -78,6 +84,12 @@ int main(int argc, char *argv[])
                 }
                 u.outputFileName = optarg;
                 u.outputFile = 1;
+
+        		if (!strstr (u.outputFileName, include))
+        		{
+        			printf("The output file name need to include with '.txt', please try again!\n");
+        			exit(0);
+        		}
 
                 o_num = 0;
                 break;

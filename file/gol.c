@@ -15,12 +15,6 @@ void read_in_file (FILE *infile, struct universe *u)
     char ch, ch_in;
     if (u->inputFile)
     {
-		char *include = ".txt";
-		if (!strstr (u->inputFileName, include))
-		{
-			printf("The input file name need to include with .txt, please try again!\n");
-			exit(0);
-		}
         infile = fopen(u->inputFileName,"rt");
 		if (infile == NULL)
 		{
