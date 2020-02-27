@@ -108,8 +108,8 @@ void read_in_file (FILE *infile, struct universe *u)
         int len;
         for (i = 0; i < MAX; ++i)
         {
-            gets(input[i]);
-            if (!*input[i])
+            fgets(input[i], sizeof(input[i]), stdin);
+            if (strcmp(input[i], "\n") == 0)
             {
                 break;
             }
@@ -125,6 +125,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 printf("the length is not correct!\n");
                 exit(0);
             }
+            check_len = len;
         }
 		
 		if (i == 0)
@@ -133,7 +134,7 @@ void read_in_file (FILE *infile, struct universe *u)
 			exit(0);
 		}
         u->row = i;
-        u->column = len;
+        u->column = len - 1;
 
         u->mat = (int **)malloc(sizeof(int *) * u->row);
         for (i = 0; i < u->row; ++i)
@@ -156,6 +157,11 @@ void read_in_file (FILE *infile, struct universe *u)
                 else if (input[i][j] == '*')
                 {
                     u->mat[i][j] = 1;
+                }
+                else if (input[i][j] == '\n')
+                {
+                    printf("\n");
+                    continue;
                 }
                 else
                 {
