@@ -58,14 +58,13 @@ void read_in_file (FILE *infile, struct universe *u)
 			exit(0);
 		}
 
-		//if no blank in the last row
+		//if no blank in the last row, make the input file readable
 		if ( column != 0)
 		{
 		    row = row + 1;
 		}
         //set the row in the struct universe
         u->row = row;
-        printf("row column %d %d\n", u->row, column);
 
         u->mat = (int **)malloc(sizeof(int *) * u->row);
         for (i = 0; i < u->row; ++i)
