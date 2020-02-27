@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<getopt.h>
 #include<string.h>
+#include<errno.h>
 
 #include"gol.h"
 
@@ -51,12 +52,12 @@ int main(int argc, char *argv[])
 
                 if(!strcmp("-s", optarg) || !strcmp("-g", optarg) || !strcmp("-o", optarg) || !strcmp("-t", optarg))
                 {
-                    printf("wrong input command line: please input the correct input file name!\n");
+                    printf("Error: Wrong input command line, please input the correct input file name if you have '-i'!\n");
                     exit(0);
                 }
                 if ( strcmp(u.inputFileName, optarg) && i_num == 0)
                 {
-                    printf("The file name input is not the same\n");
+                    printf("Error: Please input the correct file name for input file!\n");
                     exit(0);
                 }
                 u.inputFileName = optarg;
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 
                 if (!strstr (u.inputFileName, include))
         		{
-        			printf("The input file name need to include with '.txt', please try again!\n");
+        			printf("Error: The input file name need to include with '.txt', please try again!\n");
         			exit(0);
         		}
 
@@ -73,13 +74,13 @@ int main(int argc, char *argv[])
             case 'o':
                 if (!o_num)
                 {
-                    printf("'-o' repeated!!\n");
+                    printf("Error: The option '-o' repeated!!\n");
                     exit(0);
                 }
 
                 if(!strcmp("-s", optarg) || !strcmp("-g", optarg) || !strcmp("-i", optarg) || !strcmp("-t", optarg))
                 {
-                    printf("wrong input command line: please input the correct output file name!\n");
+                    printf("Error: wrong input command line, please input the correct output file name!\n");
                     exit(0);
                 }
                 u.outputFileName = optarg;
@@ -87,7 +88,7 @@ int main(int argc, char *argv[])
 
         		if (!strstr (u.outputFileName, include))
         		{
-        			printf("The output file name need to include with '.txt', please try again!\n");
+        			printf("Error: The output file name need to include with '.txt', please try again!\n");
         			exit(0);
         		}
 
@@ -96,24 +97,24 @@ int main(int argc, char *argv[])
             case 'g':
                 if (!g_num)
                 {
-                    printf("'-g' repeated!!\n");
+                    printf("Error: The option '-g' repeated!!\n");
                     exit(0);
                 }
 				
 				if(!strcmp("-s", optarg) || !strcmp("-i", optarg) || !strcmp("-o", optarg) || !strcmp("-t", optarg))
                 {
-                    printf("wrong input command line: please input the correct number of generation!\n");
+                    printf("Error: wrong input command line, please input the correct number of generation!\n");
                     exit(0);
                 }
 				else if (atoi(optarg) ==0)
 				{
-					printf("wrong input command line: please input the correct number of generation!\n");
+					printf("Error: Wrong input command line, please input the correct number of generation!\n");
 					exit(0);
 				}
                 u.generation_num = atof(optarg);
                 if ( atof(optarg) != (int)atof(optarg) )
                 {
-                    printf("Please input the integer for the generation number!\n");
+                    printf("Error: Please input the integer for the generation number!\n");
                     exit(0);
                 }
                 g_num = 0;
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
             case 's':
                 if (!s_num)
                 {
-                    printf("'-s' repeated!!\n");
+                    printf("Error: The option '-s' repeated!!\n");
                     exit(0);
                 }
 
@@ -131,7 +132,7 @@ int main(int argc, char *argv[])
             case 't':
                 if (!t_num)
                 {
-                    printf("option '-t' repeated!!\n");
+                    printf("Error: The option '-t' repeated!!\n");
                     exit(0);
                 }
 
@@ -153,7 +154,7 @@ int main(int argc, char *argv[])
     }
     if (i_num == i_check || g_num == g_check || o_num == o_check || s_num == s_check || t_num == t_check)
     {
-        printf("The error input of the command line\n");
+        printf("Error: The error input of the command line\n");
         exit(0);
     }
 	//check the option '-i' whether inputted
@@ -203,8 +204,6 @@ int main(int argc, char *argv[])
 		{
 			print_statistics (&u);
 		}
-        //printf("%f of the cells currently alive \n", u.statistic);
-        //write_out_file(outfile, &u);
     }
 	
 	if (print_stat)
