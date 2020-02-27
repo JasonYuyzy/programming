@@ -21,7 +21,7 @@ void read_in_file (FILE *infile, struct universe *u)
 		    perror("Error");
 			exit(0);
 		}
-        while( (ch=fgetc(infile)) != EOF )
+        while ( (ch=fgetc(infile)) != EOF )
         {
             if (ch != '\n')
             {
@@ -52,13 +52,20 @@ void read_in_file (FILE *infile, struct universe *u)
         }
         fseek(infile,0,SEEK_SET);
 		
-		if (row == 0)
+		if (row == 0 || u->column == 0)
 		{
 			printf("The file is empty!\n");
 			exit(0);
 		}
+
+		//if no blank in the last row
+		if ( column != 0)
+		{
+		    row = row + 1;
+		}
         //set the row in the struct universe
         u->row = row;
+        printf("row column %d %d\n", u->row, column);
 
         u->mat = (int **)malloc(sizeof(int *) * u->row);
         for (i = 0; i < u->row; ++i)
@@ -96,13 +103,16 @@ void read_in_file (FILE *infile, struct universe *u)
                 row = row + 1;
                 column = 0;
             }
+            //printf("Yes %d, %d\n", row, column);
         }
 		fclose(infile);
-        printf("successfully read in file!!!\n");
+
+        printf("successfully read in file!\n");
     }
     else
     {
-        //read the command line input
+        //read the command line input file
+        printf("Please input the life map, press 'Enter' to finish the input:\n");
         char input[MAX][LEN];
         int check_len = 0;
         int len;
