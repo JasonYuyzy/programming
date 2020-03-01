@@ -32,10 +32,13 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
 
-                    if ( strcmp(u.inputFileName, argv[i+1]) && i_num == 0)
+                    if (i_num == 0)
                     {
-                        fprintf(stderr, "Error: The file name input is not correct!\n");
-                        exit(1);
+                        if (strcmp(u.inputFileName, argv[i+1]) != 0)
+                        {
+                            fprintf(stderr, "Error: The file name input is not correct!\n");
+                            exit(1);
+                        }
                     }
                     u.inputFileName = argv[i+1];
                     u.inputFile = 1;
@@ -162,6 +165,7 @@ int main(int argc, char *argv[])
     u.alive_average = 0;
     u.column = 0;
     u.row = 0;
+    u.finished = 0;
     read_in_file(infile, &u);
 
     for ( i = 0; i < u.generation_num; ++i)
@@ -190,5 +194,4 @@ int main(int argc, char *argv[])
     //free the matrix will and exit(0);
     u.finished = 1;
     evolve( &u, will_be_alive);
-
 }
