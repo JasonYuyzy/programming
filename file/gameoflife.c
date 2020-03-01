@@ -20,48 +20,59 @@ int main(int argc, char *argv[])
             switch (argv[i][1])
             {
                 case 'i':
-                    if(!strcmp("-s", argv[i+1]) || !strcmp("-g", argv[i+1]) || !strcmp("-o", argv[i+1]) || !strcmp("-t", argv[i+1]))
+                    //if(!strcmp("-s", argv[i+1]) || !strcmp("-g", argv[i+1]) || !strcmp("-o", argv[i+1]) || !strcmp("-t", argv[i+1]))
+                    //{
+                        //perror("Error: Wrong input command line, please input the correct input file name if you have '-i'!\n");
+                        //exit(1);
+                    //}
+
+                    if (!argv[i+1])
                     {
-                        printf("Error: Wrong input command line, please input the correct input file name if you have '-i'!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: The file name can not use with empty string!\n");
+                        exit(1);
                     }
 
                     if ( strcmp(u.inputFileName, argv[i+1]) && i_num == 0)
                     {
-                        printf("Error: Please input the correct file name for input file!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: The file name input is not correct!\n");
+                        exit(1);
                     }
-
                     u.inputFileName = argv[i+1];
                     u.inputFile = 1;
 
-                    if (!strstr (u.inputFileName, include))
-            		{
-            			printf("Error: The input file name need to include with '.txt', please try again!\n");
-            			exit(0);
-            		}
+                    //if (!strstr (u.inputFileName, include))
+            		//{
+            			//perror("Error: The input file name need to include with '.txt', please try again!\n");
+            			//exit(1);
+            		//}
 
             		i_num = 0;
                     break;
                 case 'o':
                     if (!o_num)
                     {
-                        printf("Error: The option '-o' repeated!!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: The option '-o' repeated!!\n");
+                        exit(1);
                     }
 
                     if(!strcmp("-s", argv[i+1]) || !strcmp("-g", argv[i+1]) || !strcmp("-i", argv[i+1]) || !strcmp("-t", argv[i+1]))
                     {
-                        printf("Error: wrong input command line, please input the correct output file name!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: Wrong input command line, please input the correct output file name!\n");
+                        exit(1);
+                    }
+                    if (!argv[i+1])
+                    {
+                        fprintf(stderr, "Error: the output file name is empty!\n");
+                        exit(1);
                     }
                     u.outputFileName = argv[i+1];
                     u.outputFile = 1;
 
+
             		if (!strstr (u.outputFileName, include))
             		{
-            			printf("Error: The output file name need to include with '.txt', please try again!\n");
-            			exit(0);
+            			fprintf(stderr, "Error: The output file name need to include with '.txt', please try again!\n");
+            			exit(1);
             		}
 
                     o_num = 0;
@@ -69,33 +80,39 @@ int main(int argc, char *argv[])
                 case 'g':
                     if (!g_num)
                     {
-                        printf("Error: The option '-g' repeated!!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: The option '-g' repeated!!\n");
+                        exit(1);
                     }
 
-    				if(!strcmp("-s", argv[i+1]) || !strcmp("-i", argv[i+1]) || !strcmp("-o", argv[i+1]) || !strcmp("-t", argv[i+1]))
+    				/*if(!strcmp("-s", argv[i+1]) || !strcmp("-i", argv[i+1]) || !strcmp("-o", argv[i+1]) || !strcmp("-t", argv[i+1]))
                     {
-                        printf("Error: wrong input command line, please input the correct number of generation!\n");
-                        exit(0);
-                    }
-    				else if (atoi(argv[i+1]) == 0)
+                        perror("Error: wrong input command line, please input the correct number of generation!\n");
+                        exit(1);
+                    }*/
+
+    				if (atoi(argv[i+1]) == 0)
     				{
-    					printf("Error: Wrong input command line, please input the correct number of generation!\n");
-    					exit(0);
+    					perror("Error argument of the generation number");
+    					exit(1);
+    				}
+    				if (!argv[i+1])
+    				{
+    				    fprintf(stderr, "Error: The generation number is empty!\n");
+    				    exit(1);
     				}
                     u.generation_num = atof(argv[i+1]);
                     if ( atof(argv[i+1]) != (int)atof(argv[i+1]) )
                     {
-                        printf("Error: Please input the integer for the generation number!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: Please input the integer for the generation number!\n");
+                        exit(1);
                     }
                     g_num = 0;
                     break;
                 case 's':
                     if (!s_num)
                     {
-                        printf("Error: The option '-s' repeated!!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: The option '-s' repeated!!\n");
+                        exit(1);
                     }
 
                     print_stat = 1;
@@ -104,16 +121,16 @@ int main(int argc, char *argv[])
                 case 't':
                     if (!t_num)
                     {
-                        printf("Error: The option '-t' repeated!!\n");
-                        exit(0);
+                        fprintf(stderr, "Error: The option '-t' repeated!\n");
+                        exit(1);
                     }
 
                     use_torus = 1;
                     t_num = 0;
                     break;
                 default:
-                    printf("Error: unknown option '-%c'\n", argv[i][1]);
-                    exit(0);
+                    fprintf(stderr, "Error: unknown option '-%c'\n", argv[i][1]);
+                    exit(1);
             }
         }
     }
@@ -145,7 +162,6 @@ int main(int argc, char *argv[])
     u.alive_average = 0;
     u.column = 0;
     u.row = 0;
-
     read_in_file(infile, &u);
 
     for ( i = 0; i < u.generation_num; ++i)

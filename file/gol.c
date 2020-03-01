@@ -15,11 +15,11 @@ void read_in_file (FILE *infile, struct universe *u)
     char ch, ch_in;
     if (u->inputFile)
     {
-        infile = fopen(u->inputFileName,"rt");
+        infile = fopen(u->inputFileName,"r");
 		if (infile == NULL)
 		{
-		    perror("Error");
-			exit(0);
+		    perror("The input file name is not correct");
+			exit(1);
 		}
         while ( (ch=fgetc(infile)) != EOF )
         {
@@ -37,8 +37,8 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
                 else if (check_column != column)
                 {
-                    printf("Error: The number of the row is different from others\n");
-                    exit(0);
+                    fprintf(stderr, "Error: The number of the row is different from others\n");
+                    exit(1);
                 }
                 else
                 {
@@ -54,8 +54,8 @@ void read_in_file (FILE *infile, struct universe *u)
 		
 		if (row == 0 || u->column == 0)
 		{
-			printf("The file is empty!\n");
-			exit(0);
+			fprintf(stderr, "Error: The input file is empty!\n");
+			exit(1);
 		}
 
 		//if no blank in the last row, make the input file readable
@@ -92,8 +92,8 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
                 else
                 {
-                    printf("Error: The input file data is not correct\n");
-                    exit(0);
+                    fprintf(stderr, "Error: The input file data is not correct\n");
+                    exit(1);
                 }
                 column = column + 1;
             }
@@ -111,7 +111,7 @@ void read_in_file (FILE *infile, struct universe *u)
     else
     {
         //read the command line input file
-        printf("Please input the life map, press 'Enter' to finish the input:\n");
+        //printf("Please input the life map, press 'Enter' to finish the input:\n");
         char input[MAX][LEN];
         int check_len = 0;
         int len;
@@ -131,16 +131,16 @@ void read_in_file (FILE *infile, struct universe *u)
             len = strlen(input[i]);
             if (check_len != len)
             {
-                printf("Error: The length is not match with other rows!\n");
-                exit(0);
+                fprintf(stderr, "Error: The length is not match with other rows!\n");
+                exit(1);
             }
             check_len = len;
         }
 		
 		if (i == 0)
 		{
-			printf("Error: Nothing inputted!\n");
-			exit(0);
+			fprintf(stderr, "Error: Nothing inputted!\n");
+			exit(1);
 		}
         u->row = i;
         u->column = len - 1;
@@ -169,13 +169,13 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
                 else if (input[i][j] == '\n')
                 {
-                    printf("\n");
+                    //printf("\n");
                     continue;
                 }
                 else
                 {
-                    printf("Error: The input file data is not correct\n");
-                    exit(0);
+                    fprintf(stderr, "Error: The input file data is not correct\n");
+                    exit(1);
                 }
             }
         }
@@ -189,7 +189,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 	if (u->outputFile)
 	{
 		//result put into the file
-		outfile = fopen(u->outputFileName, "w+");
+		outfile = fopen(u->outputFileName, "w");
 		for (int i = 0; i < u->row; ++i)
 		{
 			for (int j = 0; j < u->column; ++j)
@@ -231,7 +231,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 	else
 	{
 		//the result put on screen
-		printf("The final result on screen for %0.f generation:\n", u->generation_num);
+		printf("The final result on screen for %0.f generations:\n", u->generation_num);
 		for (int i = 0; i < u->row; ++i)
 		{
 			for (int j = 0; j < u->column; ++j)
