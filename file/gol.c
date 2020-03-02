@@ -87,7 +87,6 @@ void read_in_file (FILE *infile, struct universe *u)
         {
             if (ch_in != '\n')
             {
-                //printf("%c", ch_in);
                 if (ch_in == '.')
                 {
                     u->mat[row][column] = 0;
@@ -109,16 +108,12 @@ void read_in_file (FILE *infile, struct universe *u)
                 row = row + 1;
                 column = 0;
             }
-            //printf("Yes %d, %d\n", row, column);
         }
 		fclose(infile);
-
-        //printf("successfully read in file!\n");
     }
     else
     {
-        //read the command line input file
-        //printf("Please input the life map, press 'Enter' to finish the input:\n");
+        //read the command line input data
         char input[MAX][LEN];
         int check_len = 0;
         int len;
@@ -196,7 +191,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 {
 	if (u->outputFile)
 	{
-		//result put into the file
+		//result put into the .txt file
 		outfile = fopen(u->outputFileName, "w");
 		for (int i = 0; i < u->row; ++i)
 		{
@@ -239,7 +234,6 @@ void write_out_file (FILE *outfile, struct universe *u)
 	else
 	{
 		//the result put on screen
-		//printf("The final result on screen for %0.f generations:\n", u->generation_num);
 		for (int i = 0; i < u->row; ++i)
 		{
 			for (int j = 0; j < u->column; ++j)
@@ -278,6 +272,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 
 int is_alive (struct universe *u, int column, int row)
 {
+    //check and return the alive data
     if (u->mat[row][column])
     {
         return 1;
@@ -399,6 +394,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
         will[i] = (int *)malloc(sizeof(int) * u->column);
     }
 
+    //free the local matrix and exit the program
     if (u->finished)
      {
         for (int i = 0; i < u->row; ++i)
@@ -408,6 +404,7 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
         exit(0);
     }
 
+    //start evolving the alive matrix
     for (i = 0; i < u->row; ++i)
     {
         for (j = 0; j < u->column; ++j)
@@ -435,7 +432,9 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
 
 void print_statistics (struct universe *u)
 {
+    //calculate the percentage of current life map
     u->statistic = u->alive_num/u->whole_life;
+    //calculate the average of the all alive percentage
     u->alive_average = u->alive_average + u->statistic/(u->generation_num+1);
     u->alive_num = 0;
 }

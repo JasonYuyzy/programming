@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     int i_num=1, o_num=1, g_num=1, s_num=1, t_num=1;
     int i, use_torus=0, print_stat=0;
     char *include = ".txt";
-
+    //read the command line option
     for (i = 1; i < argc; ++i)
     {
         if (argv[i][0] == '-' && !argv[1][2])
@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
             }
         }
     }
+    //set the option
     if (i_num)
     {
         u.inputFile = 0;
@@ -142,13 +143,16 @@ int main(int argc, char *argv[])
     u.column = 0;
     u.row = 0;
     u.finished = 0;
+    //read the file
     read_in_file(infile, &u);
 
+    //calculate the percentage of the life map
     if (print_stat)
     {
         print_statistics (&u);
     }
 
+    //start to evolve
     for ( i = 0; i < u.generation_num; ++i)
     {
 
@@ -167,7 +171,9 @@ int main(int argc, char *argv[])
 		}
     }
 
+    //finish the evolve and print or output the .txt file
 	write_out_file(outfile, &u);
+	//print the statistic if needed
 	if (print_stat)
 	{
 	    float print_current = u.statistic*100;
