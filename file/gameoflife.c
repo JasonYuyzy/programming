@@ -15,7 +15,12 @@ int main(int argc, char *argv[])
     //read the command line option
     for (i = 1; i < argc; ++i)
     {
-        if (argv[i][0] == '-' && !argv[1][2])
+        if (argv[i][2] && argv[i][0] == '-')
+        {
+            fprintf(stderr, "Error: unknown option!\n");
+            exit(1);
+        }
+        if (argv[i][0] == '-')
         {
             switch (argv[i][1])
             {
@@ -37,6 +42,15 @@ int main(int argc, char *argv[])
                     u.inputFileName = argv[i+1];
                     u.inputFile = 1;
             		i_num = 0;
+
+                    if (argv[i+2])
+                    {
+            		    if (argv[i+2][0] != '-')
+            		    {
+            		        fprintf(stderr, "The command line input is wrong!\n");
+            		        exit(1);
+            		    }
+            		}
                     break;
                 case 'o':
                     if (!argv[i+1])
@@ -49,13 +63,12 @@ int main(int argc, char *argv[])
                     {
                         if (strcmp(u.outputFileName, argv[i+1]) != 0)
                         {
-                            fprintf(stderr, "Error: The output file name input is not correct!\n");
+                            fprintf(stderr, "Error: The output file name is conflict!\n");
                             exit(1);
                         }
                     }
                     u.outputFileName = argv[i+1];
                     u.outputFile = 1;
-
 
             		if (!strstr (u.outputFileName, include))
             		{
@@ -64,6 +77,15 @@ int main(int argc, char *argv[])
             		}
 
                     o_num = 0;
+
+                    if (argv[i+2])
+                    {
+                        if (argv[i+2][0] != '-')
+            		    {
+            		        fprintf(stderr, "The command line input is wrong!\n");
+            		        exit(1);
+            		    }
+            		}
                     break;
                 case 'g':
                     if (!argv[i+1])
@@ -94,16 +116,42 @@ int main(int argc, char *argv[])
                         exit(1);
                     }
                     g_num = 0;
+
+                    if (argv[i+2])
+                    {
+                        if (argv[i+2][0] != '-')
+            		    {
+            		        fprintf(stderr, "The command line input is wrong!\n");
+            		        exit(1);
+            		    }
+            		}
                     break;
                 case 's':
-
                     print_stat = 1;
                     s_num = 0;
+
+                    if (argv[i+1])
+                    {
+                        if (argv[i+1][0] != '-')
+            		    {
+            		        fprintf(stderr, "The command line input is wrong!\n");
+            		        exit(1);
+            		    }
+            		}
                     break;
                 case 't':
-
                     use_torus = 1;
                     t_num = 0;
+
+                    if (argv[i+1])
+                    {
+                        if (argv[i+1][0] != '-')
+                        {
+                            fprintf(stderr, "The command line input is wrong!\n");
+                            exit(1);
+                        }
+                    }
+
                     break;
                 default:
                     fprintf(stderr, "Error: unknown option '-%c'\n", argv[i][1]);
