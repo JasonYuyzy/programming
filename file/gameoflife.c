@@ -92,17 +92,17 @@ int main(int argc, char *argv[])
                         perror("Error: wrong input command line, please input the correct number of generation!\n");
                         exit(1);
                     }*/
-
+                    if (!argv[i+1])
+    				{
+    				    fprintf(stderr, "Error: The generation number is empty!\n");
+    				    exit(1);
+    				}
     				if (atoi(argv[i+1]) == 0)
     				{
     					perror("Error argument of the generation number");
     					exit(1);
     				}
-    				if (!argv[i+1])
-    				{
-    				    fprintf(stderr, "Error: The generation number is empty!\n");
-    				    exit(1);
-    				}
+
                     u.generation_num = atof(argv[i+1]);
                     if ( atof(argv[i+1]) != (int)atof(argv[i+1]) )
                     {
