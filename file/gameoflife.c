@@ -39,21 +39,19 @@ int main(int argc, char *argv[])
             		i_num = 0;
                     break;
                 case 'o':
-                    if (!o_num)
-                    {
-                        fprintf(stderr, "Error: The option '-o' repeated!!\n");
-                        exit(1);
-                    }
-
-                    if(!strcmp("-s", argv[i+1]) || !strcmp("-g", argv[i+1]) || !strcmp("-i", argv[i+1]) || !strcmp("-t", argv[i+1]))
-                    {
-                        fprintf(stderr, "Error: Wrong input command line, please input the correct output file name!\n");
-                        exit(1);
-                    }
                     if (!argv[i+1])
                     {
                         fprintf(stderr, "Error: the output file name is empty!\n");
                         exit(1);
+                    }
+
+                    if (o_num == 0)
+                    {
+                        if (strcmp(u.outputFileName, argv[i+1]) != 0)
+                        {
+                            fprintf(stderr, "Error: The output file name input is not correct!\n");
+                            exit(1);
+                        }
                     }
                     u.outputFileName = argv[i+1];
                     u.outputFile = 1;
