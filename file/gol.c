@@ -64,7 +64,13 @@ void read_in_file (FILE *infile, struct universe *u)
 		    row = row + 1;
 		}
         //set the row in the struct universe
+        if (row > 512 || u->column > 512)
+        {
+            fprintf(stderr, "Error: The row or column is too large to store with\n");
+            exit(1);
+        }
         u->row = row;
+
 
         u->mat = (int **)malloc(sizeof(int *) * u->row);
         for (i = 0; i < u->row; ++i)
@@ -88,6 +94,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
                 else if (ch_in == '*')
                 {
+                    u->alive_num = u->alive_num + 1;
                     u->mat[row][column] = 1;
                 }
                 else
@@ -106,7 +113,7 @@ void read_in_file (FILE *infile, struct universe *u)
         }
 		fclose(infile);
 
-        printf("successfully read in file!\n");
+        //printf("successfully read in file!\n");
     }
     else
     {
@@ -165,6 +172,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
                 else if (input[i][j] == '*')
                 {
+                    u->alive_num = u->alive_num + 1;
                     u->mat[i][j] = 1;
                 }
                 else if (input[i][j] == '\n')
@@ -179,7 +187,7 @@ void read_in_file (FILE *infile, struct universe *u)
                 }
             }
         }
-        printf("Data input successfully!\n");
+        //printf("Data input successfully!\n");
     }
 	return;
 }
@@ -231,7 +239,7 @@ void write_out_file (FILE *outfile, struct universe *u)
 	else
 	{
 		//the result put on screen
-		printf("The final result on screen for %0.f generations:\n", u->generation_num);
+		//printf("The final result on screen for %0.f generations:\n", u->generation_num);
 		for (int i = 0; i < u->row; ++i)
 		{
 			for (int j = 0; j < u->column; ++j)
@@ -381,9 +389,9 @@ int will_be_alive_torus (struct universe *u, int column, int row)
 void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int row))
 {
     //struct universe u_will;
-    int check, i, j, self_alive, count=0;
+    int check, i, j, self_alive;
 
-	//second use the local matrix
+	//use the local matrix
 	int **will;
 	will = (int **)malloc(sizeof(int *) * u->row);
 	for (i = 0; i < u->row; ++i)
@@ -423,14 +431,11 @@ void evolve (struct universe *u, int (*rule)(struct universe *u, int column, int
         }
     }
 	u->mat = will;
-	
-	count = count + 1;
 }
 
 void print_statistics (struct universe *u)
 {
     u->statistic = u->alive_num/u->whole_life;
-	printf("%.3f of cells currently alive\n", u->statistic);
-    u->alive_average = u->alive_average + u->statistic/u->generation_num;
+    u->alive_average = u->alive_average + u->statistic/(u->generation_num+1);
     u->alive_num = 0;
 }

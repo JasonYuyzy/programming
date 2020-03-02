@@ -20,12 +20,6 @@ int main(int argc, char *argv[])
             switch (argv[i][1])
             {
                 case 'i':
-                    //if(!strcmp("-s", argv[i+1]) || !strcmp("-g", argv[i+1]) || !strcmp("-o", argv[i+1]) || !strcmp("-t", argv[i+1]))
-                    //{
-                        //perror("Error: Wrong input command line, please input the correct input file name if you have '-i'!\n");
-                        //exit(1);
-                    //}
-
                     if (!argv[i+1])
                     {
                         fprintf(stderr, "Error: The file name can not use with empty string!\n");
@@ -42,13 +36,6 @@ int main(int argc, char *argv[])
                     }
                     u.inputFileName = argv[i+1];
                     u.inputFile = 1;
-
-                    //if (!strstr (u.inputFileName, include))
-            		//{
-            			//perror("Error: The input file name need to include with '.txt', please try again!\n");
-            			//exit(1);
-            		//}
-
             		i_num = 0;
                     break;
                 case 'o':
@@ -81,27 +68,26 @@ int main(int argc, char *argv[])
                     o_num = 0;
                     break;
                 case 'g':
-                    if (!g_num)
-                    {
-                        fprintf(stderr, "Error: The option '-g' repeated!!\n");
-                        exit(1);
-                    }
-
-    				/*if(!strcmp("-s", argv[i+1]) || !strcmp("-i", argv[i+1]) || !strcmp("-o", argv[i+1]) || !strcmp("-t", argv[i+1]))
-                    {
-                        perror("Error: wrong input command line, please input the correct number of generation!\n");
-                        exit(1);
-                    }*/
                     if (!argv[i+1])
     				{
     				    fprintf(stderr, "Error: The generation number is empty!\n");
     				    exit(1);
     				}
-    				if (atoi(argv[i+1]) == 0)
+    				//if (atoi(argv[i+1]) == 0)
+    				if (strspn(argv[i+1], "0123456789") != strlen(argv[i+1]))
     				{
-    					perror("Error argument of the generation number");
+    					fprintf(stderr, "Error argument of the generation number\n");
     					exit(1);
     				}
+
+    				if (g_num == 0)
+                    {
+                        if (u.generation_num != atof(argv[i+1]))
+                        {
+                            fprintf(stderr, "Error: The generation number input is not correct!\n");
+                            exit(1);
+                        }
+                    }
 
                     u.generation_num = atof(argv[i+1]);
                     if ( atof(argv[i+1]) != (int)atof(argv[i+1]) )
@@ -112,21 +98,11 @@ int main(int argc, char *argv[])
                     g_num = 0;
                     break;
                 case 's':
-                    if (!s_num)
-                    {
-                        fprintf(stderr, "Error: The option '-s' repeated!!\n");
-                        exit(1);
-                    }
 
                     print_stat = 1;
                     s_num = 0;
                     break;
                 case 't':
-                    if (!t_num)
-                    {
-                        fprintf(stderr, "Error: The option '-t' repeated!\n");
-                        exit(1);
-                    }
 
                     use_torus = 1;
                     t_num = 0;
@@ -168,8 +144,14 @@ int main(int argc, char *argv[])
     u.finished = 0;
     read_in_file(infile, &u);
 
+    if (print_stat)
+    {
+        print_statistics (&u);
+    }
+
     for ( i = 0; i < u.generation_num; ++i)
     {
+
         if (use_torus)
         {
             evolve(&u,will_be_alive_torus);
@@ -184,12 +166,15 @@ int main(int argc, char *argv[])
 			print_statistics (&u);
 		}
     }
-	
+
+	write_out_file(outfile, &u);
 	if (print_stat)
 	{
-		printf("%.3f of cells alive on average\n", u.alive_average);
+	    float print_current = u.statistic*100;
+	    float print_average = u.alive_average*100;
+	    printf("%.3f%% of cells currently alive\n", print_current);
+		printf("%.3f%% of cells alive on average\n", print_average);
 	}
-    write_out_file(outfile, &u);
 
     //free the matrix will and exit(0);
     u.finished = 1;
